@@ -31,7 +31,7 @@ def listcomports():
     for pnum, sdesc, details in sorted(ports):
         portnums.append(pnum)
         portinfo.append(f"{pnum}: {sdesc}") #short description
-        # portinfo.append("{}: {} [{}]".format(port, desc, details)) #long description
+        #portinfo.append("{}: {} [{}]".format(port, desc, details)) #long description
     return portnums,portinfo
     
     
@@ -52,11 +52,12 @@ def listcomports_verbose():
 def streamserialdata(port):
 
     #open/configure port
-    with Serial(port, 4800, timeout=1) as ser:
+    with Serial(port, 9600, timeout=1) as ser:
         ii = 0
         while ii <= 100:
             ii += 1
-            print(ser.readline().decode('ascii', errors='replace').strip())
+            print(ser.readline())
+            #print(ser.readline().decode('ascii', errors='replace').strip())
 
 
 
@@ -64,7 +65,7 @@ def streamgpsdata(port):
     try:
 
         #open/configure port
-        with Serial(port, 4800, timeout=1) as ser:
+        with Serial(port, 9600, timeout=1) as ser:
             ii = 0
             while ii <= 100:
                 ii += 1
@@ -109,7 +110,7 @@ def getcurrentposition(port,numattempts):
 
     try:
         # try to read a line of data from the serial port and parse
-        with Serial(port, 4800, timeout=1) as ser:
+        with Serial(port, 9600, timeout=1) as ser:
 
             ii = 0
             while True: #infinite loop
