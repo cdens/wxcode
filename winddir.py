@@ -1,32 +1,25 @@
 #!/usr/bin/env python3
 
-from gpiozero import MCP3008
-import time
-import RPi.GPIO as GPIO
+import busio, digitalio, board
+import adafruit_mcp3xxx.mcp3008 as MCP
+from adafruit_mcp3xxx.analog_in import AnalogIn
 
-Vref = 3.3
+#create SPI interface
+spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
 
-#GPIO.setmode(GPIO.BOARD)
-#clk = 23 
-#mosi = 19
-#miso = 21
+#create chip select instance
+cs = digitalio.DigitalInOut(board.D22)
 
-GPIO.setmode(GPIO.BCM)
-clk = 11
-miso = 9
-mosi = 10
-cs = 22
+#create MCP3008 instance
+mcp = MCP.MCP3008(spi, cs)
 
-GPIO.setup(cs, GPIO.IN)
+#create analog input channels
+channels = []
+mcp_pins = [MCP.P0, MCP.P1, MCP.P2, MCP.P3, MCP.P4, MCP.P5, MCP.P6, MCP.P7]
+for ch in range(8):
+    channels.append(AnalogIn(mcp, mcp_pins[ch]))
 
-results = []
-for ch in range(0,8):
-    results.append( MCP3008(channel=ch, clock_pin=clk, mosi_pin=mosi, miso_pin=miso))
-    print(f"Channel {ch}: Value= {results[ch].value*Vref} V")
 
-#ch = 0
-#m = MCP3008(channel=ch, clock_pin=clk, miso_pin=miso, mosi_pin=mosi)
-#m = MCP3008(channel=ch)
-#print(m.value)
-
-#GPIO.cleanup()
+#print output from channels
+for (i,ch) in enumerate(channels):
+    print(f"Channel {i}: value={ch.value}, voltage={ch.voltage}")

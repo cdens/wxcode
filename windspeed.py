@@ -31,12 +31,10 @@ def countSensorTriggers(pin,duration):
     
     GPIO.cleanup()
 
-    return counts 
+    return counts
+
 
 def pollanemometer():
-
-    #TODO: poll wind direction sensor
-    wdir = 135
 
     #get number of anemometer rotations in 10 seconds (GPIO17/pin11)
     counts = countSensorTriggers(17,10) 
@@ -44,10 +42,9 @@ def pollanemometer():
     #TODO:convert counts to wind speed (mph)
     wspd = counts*1.5 #example (incorrect)
 
-    return wspd, wdir
+    return wspd
 
 
 if __name__ == "__main__":
-    wspd,wdir = pollanemometer()
+    wspd = pollanemometer()
 
-    print(wspd/1.5)
