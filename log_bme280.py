@@ -42,6 +42,36 @@ def set_bme280_i2c():
     
     return bus, address
 
+    
+#retrieve mean value from # of obs over interval
+def get_mean_bme280_obs(num,dt):
+    
+    if num < 1:
+        num = 1
+    if dt <= 0.1:
+        dt = 0.1
+    
+    no = 0
+    temp = 0.
+    rh = 0.
+    pres = 0.
+    
+    while no < num:
+        cT,cq,cP = retrieve_bme280_ob()
+        
+        no += 1
+        temp += cT
+        rh += cq
+        pres += cP
+        
+        time.sleep(dt)
+        
+    temp = temp/no
+    rh = rh/no
+    pres = pres/no
+    
+    return temp, rh, pres
+    
 
 #if function is called, run log to command line
 if __name__ == "__main__":
