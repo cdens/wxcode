@@ -12,3 +12,8 @@ def postregularupdate(time,T,RH,P,rainrate,wspd,wdir,numStrikes,solar):
 
 
     return success
+
+
+def postGPSpositionchange(lat,lon):
+    success = False
+    return success

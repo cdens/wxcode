@@ -3,57 +3,44 @@
 import time, datetime
 import RPi.GPIO as GPIO
 
-global counts
 
 def voltageChangeCallbackCounter(pin):
     
-    global counts
-    if not GPIO.input(pin):
-        counts = counts + 1
+    with open(".config") as c:
+        logfile = c.read().split("\n")[2].split(' ')[1].strip()
 
-def countSensorTriggers(pin,duration):
+    with open(logfile,"a") as f:
+        f.write("switch\n")
+    
+    print("[+] Rain bucket tip detected")
 
-    #initializing counter
-    global counts
-    counts = 0
+
+def logBucketTips(pin):
 
     #setting switch GPIO as input, pull high voltage by default
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.add_event_detect(pin, GPIO.BOTH, callback=voltageChangeCallbackCounter, bouncetime=10)
     
-    tt = 0
-    dt = 0.05
-    
-    while tt <= duration:
-        time.sleep(dt)
-        tt += dt
+    print("[+] Rain logger configured, waiting for bucket tips")
+
+    while True:
+        time.sleep(10)
     
     GPIO.cleanup()
 
-    return counts
 
 
-def pollanemometer():
+def runRainLogger():
 
-    #get number of anemometer rotations in 30 seconds (GPIO17/pin11)
-    dt = 30
-    counts = countSensorTriggers(17,dt)
-    
-    #convert counts to wind speed (mph)
-    # speed (in/sec) = 2*pi*r/t (r=10 in, t = dt -> default 30sec)
-    # 1 in/sec = 0.056818 mph
-    # conversion = 2*pi*10 inches * 0.056818 = 3.569887506
-    wspd = counts*3.569887506/dt
-    
-    #calibration factor for wind energy loss
-    wspd = wspd*1.2
+    with open(".config") as c:
+        lines = c.read().split("\n")
+        logfile = lines[2].split(' ')[1].strip()
+        dateformat = lines[3].split(' ')[1].strip()
 
-    return wspd
+    with open(logfile,"w") as f:
+        f.write(datetime.datetime.strftime(datetime.datetime.utcnow(), dateformat) + "\n")
 
+    print("[+] Rain logger initialized- configuring logger")
 
-if __name__ == "__main__":
-    print(f"[+] Starting wind speed measurement for 30 seconds")
-    wspd = pollanemometer()
-    print(f"Measured wind speed: {wspd} mph")
-
+    logBucketTips(13)

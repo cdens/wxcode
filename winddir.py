@@ -112,11 +112,15 @@ def get_winddir_from_voltages(channels, threshold):
     
     
 def getwinddirection():
+    print("[+] Getting MCP3008 channel voltages for wind direction")
     channels = get_channel_values()
+    print("[+] Determining wind direction from channel voltages")
     winddir = get_winddir_from_voltages(channels, 0.8)
     
     if winddir == -1:
         winddir = 0
+
+    print("[+] Wind direction identified")
         
     return winddir
     

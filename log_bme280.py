@@ -55,6 +55,8 @@ def get_mean_bme280_obs(num,dt):
     temp = 0.
     rh = 0.
     pres = 0.
+
+    print("[+] Starting BME280 obs")
     
     while no < num:
         cT,cq,cP = retrieve_bme280_ob()
@@ -63,6 +65,8 @@ def get_mean_bme280_obs(num,dt):
         temp += cT
         rh += cq
         pres += cP
+
+        print(f"[+] Got observation {no} of {num}")
         
         time.sleep(dt)
         
@@ -70,6 +74,8 @@ def get_mean_bme280_obs(num,dt):
     rh = rh/no
     pres = pres/no
     
+    print("[+] Finished BME280 observation cycle")
+
     return temp, rh, pres
     
 
