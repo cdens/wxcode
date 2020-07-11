@@ -5,6 +5,11 @@ import board
 import busio
 import digitalio
 import sparkfun_qwiicas3935
+import webserverinteraction as web
+
+#file to write to
+with open(".config") as c:
+    logfile = c.read().split("\n")[1].split(' ')[1].strip()
 
 #thresholds
 noise_floor = 3 
@@ -41,17 +46,16 @@ while True:
     if interrupt.value:
         itype = detector.read_interrupt_register()
 
-        #if itype == detector.NOISE:
-        #    print("Noise")
-        #elif itype == detector.DISTURBER:
-        #    print("Disturber!")
         if itype == detector.LIGHTNING:
             dist = detector.distance_to_storm
             energy = detector.lightning_energy
-            print(f"Lightning strike {dist} km away, energy={energy}")
+            
+            if dist > 1 and energy > 0:
+                with open(logfile,"a") as f:
+                    f.write(f"{dist},{energy}\n")
+                web.postlightninginfo(dist,energy)
+
             detector.clear_statistics()
-        #else:
-        #    print(f"Unknown type- {itype}")
 
     sleep(0.1)
 
