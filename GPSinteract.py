@@ -141,3 +141,18 @@ def getcurrentposition(port,numattempts):
     except Exception: #fails to connect to serial port
         trace_error()
         return 0,0,0,2
+        
+        
+        
+def writeGPSfile(file, isGood, lat, lon):
+    with open(file,"w") as f:
+        f.write(f"{int(isGood)},{lat},{lon}")
+    
+def readGPSfile(file):
+    with open(file) as f:
+        lines = f.read().split(",")
+        isGood = int(lines[0])
+        lat = float(lines[1])
+        lon = float(lines[2])
+        
+    return isGood, lat, lon

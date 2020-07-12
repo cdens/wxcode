@@ -38,7 +38,11 @@ def runLightningLogger():
     detector.watchdog_threshold = watchdog_threshold #base level to filter out disturbers (higher = more exclusive)
     detector.indoor_outdoor = detector.INDOOR #INDOOR or OUTDOOR mode
 
-
+    #initializing lightning log
+    with open(logfile,"w") as f:
+        f.write(dt.datetime.strftime(dt.datetime.utcnow(), dateformat) + "\n")
+        
+    #checking whether receiver is communicating properly- terminating if not
     if detector.connected:
         print("[+] Lightning detector connected")
     else:
@@ -47,9 +51,6 @@ def runLightningLogger():
 
     #detector loop here
     while True:
-
-        with open(logfile,"w") as f:
-            f.write(dt.datetime.strftime(dt.datetime.utcnow(), dateformat) + "\n")
 
         if interrupt.value:
             itype = detector.read_interrupt_register()
@@ -61,7 +62,7 @@ def runLightningLogger():
                 if dist > 1 and energy > 0:
                     with open(logfile,"a") as f:
                         f.write(f"{dist},{energy}\n")
-                    print(f"[+] Strike! Detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
+                    print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
                     web.postlightninginfo(dist,energy)
 
                 detector.clear_statistics()

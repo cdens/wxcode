@@ -12,7 +12,7 @@ def voltageChangeCallbackCounter(pin):
     with open(logfile,"a") as f:
         f.write("switch\n")
     
-    print("[+] Rain bucket tip detected")
+    print(f"[+] Rain bucket tip detected ({datetime.stfrtime(datetime.datetime.utcnow(),'%Y%m%d %H:%M:%S')} UTC)")
 
 
 def logBucketTips(pin):

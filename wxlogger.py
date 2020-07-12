@@ -2,6 +2,7 @@
 #Logger to record met output and save it to necessary locations
 from os import path, remove
 import datetime as dt
+import geopy.distance
 import log_bme280, winddir
 import traceback
 
@@ -20,12 +21,43 @@ def log():
         lightninglogfile = lines[1].split(' ')[1]
         rainlogfile = lines[2].split(' ')[1]
         dateformat = lines[3].split(' ')[1]
+        gpsfile = lines[4].split(' ')[1]
+        gpsport = lines[5].split(' ')[1]
 
     #getting current datetime
     cdt = dt.datetime.utcnow()
     cdtstr = cdt.strftime(dateformat) #converting datetime to string
 
-    #trying for GPS position, checking against known position (TODO)
+    #checking GPS position
+    print("[+] Checking GPS position")
+    lat,lon,_,flag = GPSinteract.getcurrentposition(gpsport,10)
+    needsGPSupdate = False
+    if flag == 0:
+        if not os.path.exists(gpsfile): #identify + save GPS position if one isn't saved
+            print(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
+            needsGPSupdate = True
+        else: #checking for position change by 1 km or more
+            isGood,lastlat,lastlon = GPSinteract.readGPSfile(gpsfile)
+            if isGood and geopy.distance.distance((lat,lon),(latlat,lastlon)).km >= 1:
+                print(f"[+] GPS position changed by more than 1 km, from (lat={lastlat}, lon={lastlon}) to (lat={lat}, lon={lon})), logging new position")
+                needsGPSupdate = True
+    elif flag == 2: #failed to open port
+        print("[!] Unable to communicate with specified port for GPS fix")
+    elif flag == 1: #no valid fix data (most likely receiver is connected but not getting satellite signal)
+        print("[!] GPS request timed out")
+  
+    #uploading/storing GPS position if necessary
+    if needsGPSupdate:
+        print("[+] Posting updated position to webserver")
+        success = webserverinteraction.postGPSpositionchange(lat,lon)
+        if success:
+            print("[+] Position upload successful, logging to file")
+            GPSinteract.writeGPSfile(gpsfile,True,lat,lon)
+        else:
+            print("[-] Position upload unsuccessful, waiting until next observation to reattempt")
+            
+                
+            
 
 
     #getting temperature/humidity/pressure
@@ -64,6 +96,8 @@ def log():
         remove(lightninglogfile) #delete file
         with open(lightninglogfile) as f:
             f.write(dt.datetime.strftime(curtime,dateformat) + "\n")
+    else:
+        print("[-] Lightning strike file not found!")
 
     #getting rainfall
     print("[+] Reading rainfall rate data")
@@ -77,6 +111,8 @@ def log():
         remove(rainlogfile)
         with open(rainlogfile) as f:
             f.write(dt.datetime.strftime(curtime,dateformat) + "\n")
+    else:
+        print("[-] Rainfall rate file not found!")
 
     #line to send to file (TODO)
     curline = f"{cdtstr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.1f}, {rainRate:4.1f} \n" #ob line to be transmitted
