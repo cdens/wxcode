@@ -24,7 +24,7 @@ def get_channel_values():
     for ch in range(8):
         channels.append(AnalogIn(mcp, mcp_pins[ch]))
     
-    return np.asarray(channels)
+    return channels
     
     
     
@@ -99,9 +99,9 @@ def get_winddir_from_voltages(channels, threshold):
     if maxval >= 2:
         minV = threshold*maxval
         isvalid = np.argwhere(channels >= minV)
-        
+
         if len(isvalid) == 1:
-            winddir = dirs[isvalid]
+            winddir = dirs[isvalid[0][0]]
             
         elif len(isvalid) > 1:
             winddir = getdirfrommultigoodvals(isvalid, dirs)
@@ -115,7 +115,11 @@ def getwinddirection():
     print("[+] Getting MCP3008 channel voltages for wind direction")
     channels = get_channel_values()
     print("[+] Determining wind direction from channel voltages")
-    winddir = get_winddir_from_voltages(channels, 0.8)
+    chvoltages = []
+    for ch in channels:
+        chvoltages.append(ch.voltage)
+    chvoltages = np.asarray(chvoltages)
+    winddir = get_winddir_from_voltages(chvoltages, 0.8)
     
     if winddir == -1:
         winddir = 0
