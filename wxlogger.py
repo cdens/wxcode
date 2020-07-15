@@ -114,8 +114,10 @@ def log():
     else:
         print("[-] Rainfall rate file not found!")
 
+    solarVal = 0 #solar intensity (TODO)
+
     #line to send to file (TODO)
-    curline = f"{cdtstr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.1f}, {rainRate:4.1f} \n" #ob line to be transmitted
+    curline = f"{cdtstr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f} \n" #ob line to be transmitted
     print(f"[!] Weather Observation: {curline}")
 
     #POST request for website (TODO)
