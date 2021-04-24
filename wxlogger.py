@@ -3,7 +3,7 @@
 from os import path, remove
 import datetime as dt
 import geopy.distance
-import log_bme280, winddir
+import log_bme280, winddir, webserverinteraction
 import traceback
 
 def log():
@@ -114,12 +114,14 @@ def log():
     else:
         print("[-] Rainfall rate file not found!")
 
-    #line to send to file (TODO)
+    #line to send to file
     curline = f"{cdtstr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.1f}, {rainRate:4.1f} \n" #ob line to be transmitted
     print(f"[!] Weather Observation: {curline}")
 
-    #POST request for website (TODO)
-    print("[+] Sending POST with observation to web server")
+    #POST request for website 
+    url = open("serveraddress","r").read().strip()
+    print("[+] Sending POST with observation to server: " + url)
+    success = postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,strikeRate,solar,password,url)
 
     #appending data to file
     curlog = reldatadir + "WxObs" + cdt.strftime(filedateformat) + ".csv"

@@ -34,11 +34,12 @@ if __name__ == "__main__":
         #infinitely looping, getting observation every 15 minutes
         while True:
             
-            cdt = datetime.datetime.utcnow()
-            if (cdt - lastob).totalseconds() >= intervalsec:
-                print(f"[+] Starting wxlogger for observation time {datetime.strftime(%Y%m%d %H:%M)} UTC")
-                wxlogger.log()
-                print(f"[+] Finished wxlogger for observation time {datetime.strftime(%Y%m%d %H:%M)} UTC")
+            if int(open("activelogging","r").read().strip()):
+                cdt = datetime.datetime.utcnow()
+                if (cdt - lastob).totalseconds() >= intervalsec:
+                    print(f"[+] Starting wxlogger for observation time {datetime.strftime(%Y%m%d %H:%M)} UTC")
+                    wxlogger.log()
+                    print(f"[+] Finished wxlogger for observation time {datetime.strftime(%Y%m%d %H:%M)} UTC")
             
             time.sleep(10) #10 second sleep between time checks
                     
