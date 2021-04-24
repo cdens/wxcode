@@ -9,23 +9,31 @@ import RPi.GPIO as GPIO
 
 
 def get_channel_values():
-
+    
     GPIO.setmode(GPIO.BCM)
+    
+    print("Mode set to BCM")
     
     #create SPI interface
     spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+    print("SPI interface created")
     
     #create chip select instance
     cs = digitalio.DigitalInOut(board.D22)
+    print("Chip select specified")
     
     #create MCP3008 instance
     mcp = MCP.MCP3008(spi, cs)
+    print("MCP instance created")
     
     #create analog input channels
     channels = []
     mcp_pins = [MCP.P0, MCP.P1, MCP.P2, MCP.P3, MCP.P4, MCP.P5, MCP.P6, MCP.P7]
-    for ch in range(8):
-        channels.append(AnalogIn(mcp, mcp_pins[ch]))
+    print("Pin list generated")
+    for pin in mcp_pins:
+        print("Appending next pin")
+        channels.append(AnalogIn(mcp, pin))
+    print("All channels appended")
     
     return channels
     
