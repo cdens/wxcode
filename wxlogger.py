@@ -3,11 +3,7 @@
 from os import path, remove
 import datetime as dt
 import geopy.distance
-<<<<<<< HEAD
-import log_bme280, winddir, webserverinteraction
-=======
 import log_bme280, windspeed, winddir, GPSinteract, webserverinteraction
->>>>>>> d2dd21a258d5f6d3291aba2ccd1bb2735f01fa57
 import traceback
 
 def log():

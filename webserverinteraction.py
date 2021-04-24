@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # WxStation web server interaction (data upload)
-import requests datetime
+import requests, datetime
 
 
 
