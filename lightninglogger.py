@@ -8,8 +8,13 @@ import digitalio
 import sparkfun_qwiicas3935
 import webserverinteraction as web
 import datetime as dt
+import RPi.GPIO as GPIO
+
+
 
 def runLightningLogger():
+    
+    GPIO.setmode(GPIO.BCM)
     
     #file to write to
     with open(".config") as c:
@@ -79,7 +84,7 @@ def runLightningLogger():
                     with open(logfile,"a") as f:
                         f.write(f"{dist},{energy}\n")
                     print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
-                    web.postlightninginfo(dist,energy)
+                    web.postlightningstrike(dist,energy)
 
                 detector.clear_statistics()
 
