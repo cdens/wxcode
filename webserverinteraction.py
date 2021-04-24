@@ -22,14 +22,18 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,passw
                 'precip':str(round(rainRate,1)), #precipitation since last ob (cm)
                 'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
                 'strikes':str(numStrikes)} #number lightning strikes in period
-
-    req = requests.post(url, data = myobj, timeout = 10)
     
-    if x.text == "SUCCESS":
-        success = True
-    else:
-        success = False
-        print(f"[!] Server update error for ob {cdtgstr}: {x.text}")
+    success = False
+    errorcode = "Connection Failed"
+    try:
+        req = requests.post(url, data = myobj, timeout = 10)
+        if x.text == "SUCCESS":
+            success = True
+        else:
+            errorcode = x.text
+            
+    except:
+        print(f"[!] Server update error for ob {cdtgstr}: {errorcode}")
 
     return success
 

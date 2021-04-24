@@ -46,8 +46,8 @@ class WindSpeedLogger:
         #convert counts to wind speed (mph)
         # speed (in/sec) = 2*pi*r/t (r=10 in, t = dt -> default 30sec)
         # 1 in/sec = 0.056818 mph
-        # conversion = 2*pi*5 inches * 0.056818 = 1.785
-        wspd = rotations*1.785/dt
+        # conversion = 2*pi* 2.5 inches * 0.056818 = 0.8925
+        wspd = rotations*0.8925/dt
         
         #calibration factor for wind energy loss
         #wspd = wspd*1.2
