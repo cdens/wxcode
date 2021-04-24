@@ -149,10 +149,14 @@ def writeGPSfile(file, isGood, lat, lon):
         f.write(f"{int(isGood)},{lat},{lon}")
     
 def readGPSfile(file):
-    with open(file) as f:
-        lines = f.read().split(",")
-        isGood = int(lines[0])
-        lat = float(lines[1])
-        lon = float(lines[2])
+    try:
+        with open(file) as f:
+            lines = f.read().split(",")
+            isGood = int(lines[0])
+            lat = float(lines[1])
+            lon = float(lines[2])
+    except ValueError:
+        isGood = 2
+        lat = lon = 0
         
     return isGood, lat, lon
