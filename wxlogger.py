@@ -8,6 +8,7 @@ import webserverinteraction as web
 import traceback
 
 #TODO:
+# recalibrate winds
 # add stuff for solar
 # fix lightning logger
 # add GPSupdate carry forward so server will update next cycle if previous one failed
@@ -42,7 +43,7 @@ def log():
         if not path.exists(gpsfile): #identify + save GPS position if one isn't saved
             print(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
             with open(gpsfile,"w") as f:
-                GPSinteract.writeGPSfile(file,1,lat,lon)
+                GPSinteract.writeGPSfile(gpsfile,1,lat,lon)
             needsGPSupdate = True
         else: #checking for position change by 1 km or more
             isGood,lastlat,lastlon = GPSinteract.readGPSfile(gpsfile)
