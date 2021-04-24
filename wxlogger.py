@@ -3,8 +3,14 @@
 from os import path, remove
 import datetime as dt
 import geopy.distance
-import log_bme280, windspeed, winddir, GPSinteract, webserverinteraction
+import log_bme280, windspeed, winddir, GPSinteract
+import webserverinteraction as web
 import traceback
+
+#TODO:
+# add stuff for solar
+# fix lightning logger
+# add GPSupdate carry forward so server will update next cycle if previous one failed
 
 def log():
     print("[+] Getting weather observation")
@@ -35,6 +41,8 @@ def log():
     if flag == 0:
         if not path.exists(gpsfile): #identify + save GPS position if one isn't saved
             print(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
+            with open(gpsfile,"w") as f:
+                GPSinteract.writeGPSfile(file,1,lat,lon)
             needsGPSupdate = True
         else: #checking for position change by 1 km or more
             isGood,lastlat,lastlon = GPSinteract.readGPSfile(gpsfile)
@@ -49,15 +57,12 @@ def log():
     #uploading/storing GPS position if necessary
     if needsGPSupdate:
         print("[+] Posting updated position to webserver")
-        success = webserverinteraction.postGPSpositionchange(lat,lon)
+        success = web.postGPSpositionchange(lat,lon)
         if success:
             print("[+] Position upload successful, logging to file")
             GPSinteract.writeGPSfile(gpsfile,True,lat,lon)
         else:
             print("[-] Position upload unsuccessful, waiting until next observation to reattempt")
-            
-                
-            
 
 
     #getting temperature/humidity/pressure
@@ -127,18 +132,19 @@ def log():
     
     
     #line to send to file
-    curline = f"{curdatetimestr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.2f}, {rainRate:4.2f}, {solarVal:4.1f} \n" #ob line to be transmitted
+    curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f} \n" #ob line to be transmitted
     print(f"[!] Weather Observation: {curline}")
 
     #POST request for website 
     url = open("serveraddress","r").read().strip()
     print("[+] Sending POST with observation to server: " + url)
-    success = postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
+    success = web.postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
 
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
     with open(curlog,"a") as f:
         f.write(curline)
+
 
 if __name__ == "__main__":
     log()
