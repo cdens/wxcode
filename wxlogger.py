@@ -47,7 +47,7 @@ def log():
             needsGPSupdate = True
         else: #checking for position change by 1 km or more
             isGood,lastlat,lastlon = GPSinteract.readGPSfile(gpsfile)
-            if isGood and geopy.distance.distance((lat,lon),(latlat,lastlon)).km >= 1:
+            if isGood and geopy.distance.distance((lat,lon),(lastlat,lastlon)).km >= 1:
                 print(f"[+] GPS position changed by more than 1 km, from (lat={lastlat}, lon={lastlon}) to (lat={lat}, lon={lon})), logging new position")
                 needsGPSupdate = True
     elif flag == 2: #failed to open port
