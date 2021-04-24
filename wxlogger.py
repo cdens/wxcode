@@ -114,12 +114,9 @@ def log():
     print("[+] Reading rainfall rate data")
     rainRate = 0
     if path.exists(rainlogfile):
-        print("Made it here")
         with open(rainlogfile) as f:
             lines = f.read().split("\n")
-            print(lines)
             lastdate = dt.datetime.strptime(lines[0].strip(),dateformat)
-            print(len(lines))
             dtime = (curdatetime - lastdate).total_seconds() / 3600 #time in hours
             rainRate = (len(lines) - 1)/dtime #rainfall (mm) per hour
         remove(rainlogfile)
@@ -134,12 +131,12 @@ def log():
     
     #line to send to file
     curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f} \n" #ob line to be transmitted
-    print(f"[!] Weather Observation: {curline}")
+    print(f"[!] Weather Observation: {curline}", end="")
 
     #POST request for website 
     url = open("serveraddress","r").read().strip()
     print("[+] Sending POST with observation to server: " + url)
-    success = web.postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
+    success = web.postregularupdate(curdatetimestr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
 
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
