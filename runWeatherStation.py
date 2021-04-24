@@ -29,10 +29,11 @@ if __name__ == "__main__":
     try:
         
         lastob = datetime.utcnow()
-        lastob = lastob.replace(minute=int(np.floor(lastob.minute/intervalmin)*intervalmin), second=0)
+        lastob = lastob.replace(year=1, second=0)
         
         #infinitely looping, getting observation every 15 minutes
-        while True:            
+        while True:
+            
             if int(open("activelogging","r").read().strip()):
                 cdt = datetime.utcnow()
                 if (cdt - lastob).total_seconds() >= intervalsec:
@@ -41,7 +42,7 @@ if __name__ == "__main__":
                     print(f"[+] Finished wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                     lastob = cdt
             
-                time.sleep(10) #10 second sleep between time checks
+            time.sleep(10) #10 second sleep between time checks
                     
         
     except KeyboardInterrupt:

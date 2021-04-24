@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from time import sleep
+import sys
 import board
 import busio
 import digitalio
@@ -47,7 +48,7 @@ def runLightningLogger():
         print("[+] Lightning detector connected")
     else:
         print("[-] Detector failed to connect")
-        exit()
+        sys.exit()
 
     #detector loop here
     while True:
