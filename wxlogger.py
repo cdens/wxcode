@@ -3,7 +3,11 @@
 from os import path, remove
 import datetime as dt
 import geopy.distance
+<<<<<<< HEAD
 import log_bme280, winddir, webserverinteraction
+=======
+import log_bme280, windspeed, winddir, GPSinteract, webserverinteraction
+>>>>>>> d2dd21a258d5f6d3291aba2ccd1bb2735f01fa57
 import traceback
 
 def log():
@@ -25,15 +29,15 @@ def log():
         gpsport = lines[5].split(' ')[1]
 
     #getting current datetime
-    cdt = dt.datetime.utcnow()
-    cdtstr = cdt.strftime(dateformat) #converting datetime to string
+    curdatetime = dt.datetime.utcnow()
+    curdatetimestr = curdatetime.strftime(dateformat) #converting datetime to string
 
     #checking GPS position
     print("[+] Checking GPS position")
     lat,lon,_,flag = GPSinteract.getcurrentposition(gpsport,10)
     needsGPSupdate = False
     if flag == 0:
-        if not os.path.exists(gpsfile): #identify + save GPS position if one isn't saved
+        if not path.exists(gpsfile): #identify + save GPS position if one isn't saved
             print(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
             needsGPSupdate = True
         else: #checking for position change by 1 km or more
@@ -67,14 +71,18 @@ def log():
     except Exception:
         print("[-] Error raised during BME280 logger call:")
         traceback.print_exc()
+        T = 0
+        q = 0
+        P = 0
     
     #getting wind speed
     print("[+] Getting wind speed")
     try:
-        wspd = pollanemometer()
+        wspd = windspeed.pollanemometer()
     except Exception:
         print("[-] Error raised in anemometer logger call:")
         traceback.print_exc()
+        wspd = 0
 
     #getting wind direction 
     print("[+] Getting wind direction")
@@ -83,6 +91,7 @@ def log():
     except Exception:
         print("[-] Error raised in wind direction logger call:")
         traceback.print_exc()
+        wdir = 0
 
     #getting number of lightning strikes
     print("[+] Reading lightning strike data")
@@ -90,12 +99,12 @@ def log():
     if path.exists(lightninglogfile):
         with open(lightninglogfile) as f:
             lines = f.read().split("\n")
-            lastdate = dt.datetime.strptime(lines[1].strip(),dateformat)
+            lastdate = dt.datetime.strptime(lines[0].strip(),dateformat)
             dtime = (dt.datetime.utcnow() - lastdate).total_seconds() * 3600 #time in hours
             strikeRate = (len(lines) - 1)/dtime #lightning strikes per hour
         remove(lightninglogfile) #delete file
-        with open(lightninglogfile) as f:
-            f.write(dt.datetime.strftime(curtime,dateformat) + "\n")
+        with open(lightninglogfile,"w") as f:
+            f.write(dt.datetime.strftime(curdatetime,dateformat) + "\n")
     else:
         print("[-] Lightning strike file not found!")
 
@@ -103,28 +112,37 @@ def log():
     print("[+] Reading rainfall rate data")
     rainRate = 0
     if path.exists(rainlogfile):
+        print("Made it here")
         with open(rainlogfile) as f:
             lines = f.read().split("\n")
-            lastdate = dt.datetime.strptime(lines[1].strip(),dateformat)
-            dtime = (curtime - lastdate).total_seconds() * 3600 #time in hours
-            strikeRate = (len(lines) - 1)/dtime #rainfall (mm) per hour
+            print(lines)
+            lastdate = dt.datetime.strptime(lines[0].strip(),dateformat)
+            print(len(lines))
+            dtime = (curdatetime - lastdate).total_seconds() / 3600 #time in hours
+            rainRate = (len(lines) - 1)/dtime #rainfall (mm) per hour
         remove(rainlogfile)
-        with open(rainlogfile) as f:
-            f.write(dt.datetime.strftime(curtime,dateformat) + "\n")
+        with open(rainlogfile,"w") as f:
+            f.write(dt.datetime.strftime(curdatetime,dateformat) + "\n")
     else:
         print("[-] Rainfall rate file not found!")
 
+    solarVal = 0 #solar intensity (TODO)
+
+    
+    
     #line to send to file
-    curline = f"{cdtstr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.1f}, {rainRate:4.1f} \n" #ob line to be transmitted
+    curline = f"{curdatetimestr}, {T:5.2f}, {q:5.2f}, {P:7.2f}, {wspd:4.1f}, {wdir:5.1f}, {strikeRate:4.2f}, {rainRate:4.2f}, {solarVal:4.1f} \n" #ob line to be transmitted
     print(f"[!] Weather Observation: {curline}")
 
     #POST request for website 
     url = open("serveraddress","r").read().strip()
     print("[+] Sending POST with observation to server: " + url)
-    success = postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,strikeRate,solar,password,url)
+    success = postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
 
     #appending data to file
-    curlog = reldatadir + "WxObs" + cdt.strftime(filedateformat) + ".csv"
+    curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
     with open(curlog,"a") as f:
         f.write(curline)
 
+if __name__ == "__main__":
+    log()

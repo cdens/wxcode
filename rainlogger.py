@@ -1,6 +1,7 @@
 #!/usr/bin/env python3 
 
-import time, datetime
+import time
+from datetime import datetime
 import RPi.GPIO as GPIO
 
 
@@ -12,7 +13,7 @@ def voltageChangeCallbackCounter(pin):
     with open(logfile,"a") as f:
         f.write("switch\n")
     
-    print(f"[+] Rain bucket tip detected ({datetime.stfrtime(datetime.datetime.utcnow(),'%Y%m%d %H:%M:%S')} UTC)")
+    print(f"[+] Rain bucket tip detected ({datetime.strftime(datetime.utcnow(),'%Y%m%d %H:%M:%S')} UTC)")
 
 
 def logBucketTips(pin):
@@ -39,8 +40,11 @@ def runRainLogger():
         dateformat = lines[3].split(' ')[1].strip()
 
     with open(logfile,"w") as f:
-        f.write(datetime.datetime.strftime(datetime.datetime.utcnow(), dateformat) + "\n")
+        f.write(datetime.strftime(datetime.utcnow(), dateformat) + "\n")
 
     print("[+] Rain logger initialized- configuring logger")
 
     logBucketTips(13)
+
+if __name__ == "__main__":
+    runRainLogger()

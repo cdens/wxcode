@@ -4,10 +4,13 @@ import busio, digitalio, board
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 import numpy as np
+import RPi.GPIO as GPIO
 
 
 
 def get_channel_values():
+
+    GPIO.setmode(GPIO.BCM)
     
     #create SPI interface
     spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
@@ -24,7 +27,7 @@ def get_channel_values():
     for ch in range(8):
         channels.append(AnalogIn(mcp, mcp_pins[ch]))
     
-    return np.asarray(channels)
+    return channels
     
     
     
@@ -94,17 +97,17 @@ def get_winddir_from_voltages(channels, threshold):
     winddir = -1
     dirs = np.array([0, 45, 90, 135, 180, 225, 270, 315])
     
-    maxval = np.max(channels)
-    
-    if maxval >= 2:
-        minV = threshold*maxval
-        isvalid = np.argwhere(channels >= minV)
-        
-        if len(isvalid) == 1:
-            winddir = dirs[isvalid]
-            
-        elif len(isvalid) > 1:
-            winddir = getdirfrommultigoodvals(isvalid, dirs)
+    winddir = dirs[np.argmax(channels)]
+
+    #maxval = np.max(channels)
+    #if maxval >= 2:
+    #    minV = threshold*maxval
+    #    isvalid = np.argwhere(channels >= minV)
+    #    if len(isvalid) == 1:
+    #        winddir = dirs[isvalid[0][0]]
+    #        
+    #    elif len(isvalid) > 1:
+    #        winddir = getdirfrommultigoodvals(isvalid, dirs)
     
     
     return winddir
@@ -115,7 +118,11 @@ def getwinddirection():
     print("[+] Getting MCP3008 channel voltages for wind direction")
     channels = get_channel_values()
     print("[+] Determining wind direction from channel voltages")
-    winddir = get_winddir_from_voltages(channels, 0.8)
+    chvoltages = []
+    for ch in channels:
+        chvoltages.append(ch.voltage)
+    chvoltages = np.asarray(chvoltages)
+    winddir = get_winddir_from_voltages(chvoltages, 0.8)
     
     if winddir == -1:
         winddir = 0

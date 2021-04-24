@@ -9,7 +9,7 @@ def postlightningstrike(dist,energy):
     return
 
 
-def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solar,password,url):
+def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,password,url):
     success = False 
     
     myobj = {'credential': password,
@@ -20,7 +20,7 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solar,password
                 'wspd':str(round(wspd,1)), #wind speed (m/s)
                 'wdir':str(wspd), #wind direction (rel to N)
                 'precip':str(round(rainRate,1)), #precipitation since last ob (cm)
-                'solar':str(solar), #downwelling shortwave radiation at surface (J/m^2)
+                'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
                 'strikes':str(numStrikes)} #number lightning strikes in period
 
     req = requests.post(url, data = myobj, timeout = 10)

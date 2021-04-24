@@ -2,7 +2,8 @@
 
 #Single point of control for all weather station logging functions
 
-import threading, sys, time, datetime
+import threading, sys, time 
+from datetime import datetime
 import numpy as np
 import rainlogger, lightninglogger, wxlogger
 
@@ -27,21 +28,20 @@ if __name__ == "__main__":
     
     try:
         
-        lastob = datetime.datetime.utcnow()
-        lastob.second = 0
-        lastob.minute = np.floor(lastob.minute/intervalmin)*intervalmin
+        lastob = datetime.utcnow()
+        lastob = lastob.replace(minute=int(np.floor(lastob.minute/intervalmin)*intervalmin), second=0)
         
         #infinitely looping, getting observation every 15 minutes
-        while True:
-            
+        while True:            
             if int(open("activelogging","r").read().strip()):
-                cdt = datetime.datetime.utcnow()
+                cdt = datetime.utcnow()
                 if (cdt - lastob).totalseconds() >= intervalsec:
-                    print(f"[+] Starting wxlogger for observation time {datetime.strftime(%Y%m%d %H:%M)} UTC")
+                    print(f"[+] Starting wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                     wxlogger.log()
-                    print(f"[+] Finished wxlogger for observation time {datetime.strftime(%Y%m%d %H:%M)} UTC")
+                    print(f"[+] Finished wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
+                    lastob = cdt
             
-            time.sleep(10) #10 second sleep between time checks
+                time.sleep(10) #10 second sleep between time checks
                     
         
     except KeyboardInterrupt:

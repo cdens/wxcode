@@ -8,41 +8,37 @@ import time
 #retrieve and return single observation from BME280 (function called by WxStation Logger)
 def retrieve_bme280_ob():
     bus, address = set_bme280_i2c()
-    bme280.load_calibration_params(bus,address)
-    return get_bme280_obs(bus,address) #pulls single set of obs, returns
+
+    port = 1 
+    address = 0x77
+    with smbus2.SMBus(port) as bus:
+        bme280.load_calibration_params(bus,address)
+        
+        obs = bme280.sample(bus,address)
+        q = obs.humidity
+        P = obs.pressure
+        T = obs.temperature
+    
+    return T,q,P 
 
 
 #log BME280 T/q/P output to command line (1 second sampling frequency)
 def log_bme280_to_cmd():
-    bus, address = set_bme280_i2c()
-    bme280.load_calibration_params(bus,address)
-
-    while True:
-        T,q,P = get_bme280_obs(bus,address)
-        print(f"\r [+] Temperature: {T:5.2f} degC, Humidity: {q:5.2f} %, Pressure: {P:6.1f} mb", end=" ")
-        time.sleep(1)
-
-
-#return observation from calibrated BME280
-def get_bme280_obs(bus,address):
-    obs = bme280.sample(bus,address)
-
-    q = obs.humidity
-    P = obs.pressure
-    T = obs.temperature
-    
-    return T,q,P
-
-
-#configure I2C parameters for BME280
-def set_bme280_i2c():
     port = 1 
     address = 0x77
-    bus = smbus2.SMBus(port)
-    
-    return bus, address
+    with smbus2.SMBus(port) as bus:
+        bme280.load_calibration_params(bus,address)
+        
+        while True:
+            obs = bme280.sample(bus,address)
+            q = obs.humidity
+            P = obs.pressure
+            T = obs.temperature
+            
+            print(f"\r [+] Temperature: {T:5.2f} degC, Humidity: {q:5.2f} %, Pressure: {P:6.1f} mb", end=" ")
+            time.sleep(1)
+ 
 
-    
 #retrieve mean value from # of obs over interval
 def get_mean_bme280_obs(num,dt):
     
@@ -57,18 +53,26 @@ def get_mean_bme280_obs(num,dt):
     pres = 0.
 
     print("[+] Starting BME280 obs")
-    
-    while no < num:
-        cT,cq,cP = retrieve_bme280_ob()
-        
-        no += 1
-        temp += cT
-        rh += cq
-        pres += cP
 
-        print(f"[+] Got observation {no} of {num}")
+    port = 1 
+    address = 0x77
+    with smbus2.SMBus(port) as bus:
+        bme280.load_calibration_params(bus,address)
+       
+        while no < num:
+            obs = bme280.sample(bus,address)
+            q = obs.humidity
+            P = obs.pressure
+            T = obs.temperature
         
-        time.sleep(dt)
+            no += 1
+            temp += T
+            rh += q
+            pres += P
+
+            print(f"[+] Got observation {no} of {num}")
+            
+            time.sleep(dt)
         
     temp = temp/no
     rh = rh/no
