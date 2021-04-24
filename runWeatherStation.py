@@ -35,7 +35,7 @@ if __name__ == "__main__":
         while True:            
             if int(open("activelogging","r").read().strip()):
                 cdt = datetime.utcnow()
-                if (cdt - lastob).totalseconds() >= intervalsec:
+                if (cdt - lastob).total_seconds() >= intervalsec:
                     print(f"[+] Starting wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                     wxlogger.log()
                     print(f"[+] Finished wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
