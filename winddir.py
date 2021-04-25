@@ -106,17 +106,6 @@ def get_winddir_from_voltages(channels, threshold):
     dirs = np.array([0, 45, 90, 135, 180, 225, 270, 315])
     
     winddir = dirs[np.argmax(channels)]
-
-    #maxval = np.max(channels)
-    #if maxval >= 2:
-    #    minV = threshold*maxval
-    #    isvalid = np.argwhere(channels >= minV)
-    #    if len(isvalid) == 1:
-    #        winddir = dirs[isvalid[0][0]]
-    #        
-    #    elif len(isvalid) > 1:
-    #        winddir = getdirfrommultigoodvals(isvalid, dirs)
-    
     
     return winddir
     

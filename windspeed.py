@@ -31,7 +31,7 @@ class WindSpeedLogger:
             time.sleep(dt)
             tt += dt
         
-        GPIO.cleanup()
+        GPIO.remove_event_detect(pin)
 
         return self.counts
 
