@@ -26,6 +26,8 @@ class LightningThread(threading.Thread):
     
     def __init__(self):
         
+        super().__init__()
+        
         GPIO.setmode(GPIO.BCM)
         
         self.locked = False
