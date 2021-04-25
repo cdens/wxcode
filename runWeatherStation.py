@@ -21,10 +21,15 @@ if __name__ == "__main__":
     LightningThread = lightninglogger.LightningThread()
     LightningThread.start()
     print("[+] Lightning logging thread initiated")
+    
         
     #specify interval (minutes) for observations
     intervalmin = 15 #minutes
     intervalsec = intervalmin*60 #to seconds
+    
+    
+    time.sleep(10)
+    print("[+] Starting WxStation logger loop")
     
     try:
         

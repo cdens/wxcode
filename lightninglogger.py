@@ -103,12 +103,12 @@ class LightningThread(threading.Thread):
         while True:
             
             if not self.locked:
-                if interrupt.value:
-                    itype = detector.read_interrupt_register()
+                if self.interrupt.value:
+                    itype = self.detector.read_interrupt_register()
         
-                    if itype == detector.LIGHTNING:
-                        dist = detector.distance_to_storm
-                        energy = detector.lightning_energy
+                    if itype == self.detector.LIGHTNING:
+                        dist = self.detector.distance_to_storm
+                        energy = self.detector.lightning_energy
                         
                         if dist > 1 and energy > 0:
                             with open(logfile,"a") as f:
@@ -116,7 +116,7 @@ class LightningThread(threading.Thread):
                             print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
                             web.postlightningstrike(dist,energy)
         
-                        detector.clear_statistics()
+                        self.detector.clear_statistics()
     
             sleep(0.1)
 
