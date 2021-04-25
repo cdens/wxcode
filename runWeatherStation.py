@@ -18,8 +18,8 @@ if __name__ == "__main__":
     print("[+] Rain logging thread initiated")
     
     print("[+] Starting lightning logging thread")
-    lightningThread = threading.Thread(target=lightninglogger.runLightningLogger)
-    lightningThread.start()
+    LightningThread = lightninglogger.LightningThread()
+    LightningThread.start()
     print("[+] Lightning logging thread initiated")
         
     #specify interval (minutes) for observations
@@ -38,7 +38,7 @@ if __name__ == "__main__":
                 cdt = datetime.utcnow()
                 if (cdt - lastob).total_seconds() >= intervalsec:
                     print(f"[+] Starting wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
-                    wxlogger.log()
+                    wxlogger.log(LightningThread)
                     print(f"[+] Finished wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                     lastob = cdt
             

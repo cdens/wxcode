@@ -6,6 +6,7 @@ import geopy.distance
 import log_bme280, windspeed, winddir, GPSinteract
 import webserverinteraction as web
 import traceback
+from time import sleep
 
 #TODO:
 # recalibrate winds
@@ -13,8 +14,12 @@ import traceback
 # fix lightning logger
 # add GPSupdate carry forward so server will update next cycle if previous one failed
 
-def log():
+def log(LightningThread):
     print("[+] Getting weather observation")
+    
+    print("[+] Locking lightning thread")
+    LightningThread.change_lock(True)
+    sleep(1)
 
     #logger config variables
     reldatadir = "../wxdata/" #relative path (slash-terminated) to data directory
@@ -94,6 +99,9 @@ def log():
         print("[-] Error raised in wind direction logger call:")
         traceback.print_exc()
         wdir = 0
+        
+    print("[+] Unlocking lightning thread")
+    LightningThread.change_lock(False)
 
     #getting number of lightning strikes
     print("[+] Reading lightning strike data")

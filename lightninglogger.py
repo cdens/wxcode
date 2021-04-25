@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 from time import sleep
+import threading
+
 import sys
 import board
 import busio
@@ -14,82 +16,109 @@ import RPi.GPIO as GPIO
 
 def runLightningLogger():
     
-    GPIO.setmode(GPIO.BCM)
+    currentLightningThread = LightningThread()
+    currentLightningThread.start()
     
-    #file to write to
-    with open(".config") as c:
-        lines = c.read().split("\n")
-        logfile = lines[1].split(' ')[1].strip()
-        dateformat = lines[3].split(' ')[1].strip()
-        
-    #initializing lightning log
-    with open(logfile,"w") as f:
-        f.write(dt.datetime.strftime(dt.datetime.utcnow(), dateformat) + "\n")
-        
-    isConnected = False
-    numAttempts = 0
 
-    #thresholds
-    maxAttempts = 20 #stop trying after 20 failed connects
-    noise_floor = 3 
-    watchdog_threshold = 3
-    
-    while not isConnected and numAttempts < maxAttempts:
-
-        #interrupt pin configuration
-        interrupt = digitalio.DigitalInOut(board.D24)
-        interrupt.direction = digitalio.Direction.INPUT
-        interrupt.pull = digitalio.Pull.DOWN
-    
-        #SPI object
-        spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
-    
-        #chip select object setup
-        cs = digitalio.DigitalInOut(board.D23)
-        cs.direction = digitalio.Direction.OUTPUT
-    
-        #create object for SPI comms with AS3935 detector
-        detector = sparkfun_qwiicas3935.Sparkfun_QwiicAS3935_SPI(spi, cs)
-        detector.noise_level = noise_floor #base level to filter out noise (higher = more exclusive)
-        detector.watchdog_threshold = watchdog_threshold #base level to filter out disturbers (higher = more exclusive)
-        detector.indoor_outdoor = detector.INDOOR #INDOOR or OUTDOOR mode
         
+
+class LightningThread(threading.Thread):
+    
+    def __init__(self):
+        
+        GPIO.setmode(GPIO.BCM)
+        
+        self.locked = False
+    
+        #file to write to
+        with open(".config") as c:
+            lines = c.read().split("\n")
+            logfile = lines[1].split(' ')[1].strip()
+            dateformat = lines[3].split(' ')[1].strip()
             
-        #checking whether receiver is communicating properly- terminating if not
-        if detector.connected:
-            print("[+] Lightning detector connected")
-            isConnected = True
-        else:
-            numAttempts += 1
-            print(f"[-] Detector connect attempt {numAttempts} of {maxAttempts} failed")
-            sleep(1)
+        #initializing lightning log
+        with open(logfile,"w") as f:
+            f.write(dt.datetime.strftime(dt.datetime.utcnow(), dateformat) + "\n")
             
+        self.isConnected = False
+        self.numAttempts = 0
     
-    if not isConnected: #all connect attempts failed
-        print(f"[-] All detector connect attempts failed- terminating")
-        sys.exit()
+        #thresholds
+        self.maxAttempts = 20 #stop trying after 20 failed connects
+        self.noise_floor = 3 
+        self.watchdog_threshold = 3
         
+    
+    def change_lock(self, status):
+        self.locked = status
+        
+        
+    def attempt_connect(self):
+        
+        while not self.isConnected and self.numAttempts < self.maxAttempts:
 
-    #detector loop here
-    while True:
-
-        if interrupt.value:
-            itype = detector.read_interrupt_register()
-
-            if itype == detector.LIGHTNING:
-                dist = detector.distance_to_storm
-                energy = detector.lightning_energy
+            #interrupt pin configuration
+            self.interrupt = digitalio.DigitalInOut(board.D24)
+            self.interrupt.direction = digitalio.Direction.INPUT
+            self.interrupt.pull = digitalio.Pull.DOWN
+        
+            #SPI object
+            self.spi = busio.SPI(clock=board.SCK, MISO=board.MISO, MOSI=board.MOSI)
+        
+            #chip select object setup
+            self.cs = digitalio.DigitalInOut(board.D23)
+            self.cs.direction = digitalio.Direction.OUTPUT
+        
+            #create object for SPI comms with AS3935 detector
+            self.detector = sparkfun_qwiicas3935.Sparkfun_QwiicAS3935_SPI(self.spi, self.cs)
+            self.detector.noise_level = self.noise_floor #base level to filter out noise (higher = more exclusive)
+            self.detector.watchdog_threshold = self.watchdog_threshold #base level to filter out disturbers (higher = more exclusive)
+            self.detector.indoor_outdoor = self.detector.INDOOR #INDOOR or OUTDOOR mode
+            
                 
-                if dist > 1 and energy > 0:
-                    with open(logfile,"a") as f:
-                        f.write(f"{dist},{energy}\n")
-                    print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
-                    web.postlightningstrike(dist,energy)
+            #checking whether receiver is communicating properly- terminating if not
+            if self.detector.connected:
+                print("[+] Lightning detector connected")
+                self.isConnected = True
+            else:
+                self.numAttempts += 1
+                print(f"[-] Detector connect attempt {self.numAttempts} of {self.maxAttempts} failed")
+                sleep(1)
+            
+    
+        if not isConnected: #all connect attempts failed
+            print(f"[-] All detector connect attempts failed- terminating")
+            sys.exit()
+        
+    
+            
+            
+    def run(self):
+        
+        self.attempt_connect()
+        
+        #detector loop here
+        while True:
+            
+            if not self.locked:
+                if interrupt.value:
+                    itype = detector.read_interrupt_register()
+        
+                    if itype == detector.LIGHTNING:
+                        dist = detector.distance_to_storm
+                        energy = detector.lightning_energy
+                        
+                        if dist > 1 and energy > 0:
+                            with open(logfile,"a") as f:
+                                f.write(f"{dist},{energy}\n")
+                            print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
+                            web.postlightningstrike(dist,energy)
+        
+                        detector.clear_statistics()
+    
+            sleep(0.1)
 
-                detector.clear_statistics()
-
-        sleep(0.1)
-
+            
 
 if __name__ == "__main__":
     runLightningLogger()
