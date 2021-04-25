@@ -16,10 +16,6 @@ from time import sleep
 
 def log(LightningThread):
     print("[+] Getting weather observation")
-    
-    print("[+] Locking lightning thread")
-    #LightningThread.change_lock(True)
-    #sleep(1)
 
     #logger config variables
     reldatadir = "../wxdata/" #relative path (slash-terminated) to data directory
@@ -99,9 +95,6 @@ def log(LightningThread):
         print("[-] Error raised in wind direction logger call:")
         traceback.print_exc()
         wdir = 0
-        
-    #print("[+] Unlocking lightning thread")
-    #LightningThread.change_lock(False)
 
     #getting number of lightning strikes
     print("[+] Reading lightning strike data")
