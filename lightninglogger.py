@@ -88,7 +88,7 @@ class LightningThread(threading.Thread):
                 sleep(1)
             
     
-        if not isConnected: #all connect attempts failed
+        if not self.isConnected: #all connect attempts failed
             print(f"[-] All detector connect attempts failed- terminating")
             sys.exit()
         
