@@ -105,20 +105,24 @@ class LightningThread(threading.Thread):
             GPIO.setmode(GPIO.BCM)
             
             if not self.locked:
-                if self.interrupt.value:
-                    itype = self.detector.read_interrupt_register()
-        
-                    if itype == self.detector.LIGHTNING:
-                        dist = self.detector.distance_to_storm
-                        energy = self.detector.lightning_energy
-                        
-                        if dist > 1 and energy > 0:
-                            with open(logfile,"a") as f:
-                                f.write(f"{dist},{energy}\n")
-                            print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
-                            web.postlightningstrike(dist,energy)
-        
-                        self.detector.clear_statistics()
+                try:
+                    if self.interrupt.value:
+                        itype = self.detector.read_interrupt_register()
+            
+                        if itype == self.detector.LIGHTNING:
+                            dist = self.detector.distance_to_storm
+                            energy = self.detector.lightning_energy
+                            
+                            if dist > 1 and energy > 0:
+                                with open(logfile,"a") as f:
+                                    f.write(f"{dist},{energy}\n")
+                                print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
+                                web.postlightningstrike(dist,energy)
+            
+                            self.detector.clear_statistics()
+                except RuntimeError:
+                    print("[!] LightningLogger Runtime Error failure warning")
+                    
     
             sleep(0.1)
 
