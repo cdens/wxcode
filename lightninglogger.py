@@ -102,6 +102,8 @@ class LightningThread(threading.Thread):
         #detector loop here
         while True:
             
+            GPIO.setmode(GPIO.BCM)
+            
             if not self.locked:
                 if self.interrupt.value:
                     itype = self.detector.read_interrupt_register()
