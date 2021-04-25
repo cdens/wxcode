@@ -28,7 +28,7 @@ if __name__ == "__main__":
     intervalsec = intervalmin*60 #to seconds
     
     
-    time.sleep(10)
+    time.sleep(2)
     print("[+] Starting WxStation logger loop")
     
     try:
