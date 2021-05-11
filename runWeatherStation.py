@@ -22,7 +22,7 @@ if __name__ == "__main__":
     LightningThread.start()
     print("[+] Lightning logging thread initiated")
     
-        
+    
     #specify interval (minutes) for observations
     intervalmin = 15 #minutes
     intervalsec = intervalmin*60 #to seconds
@@ -33,21 +33,26 @@ if __name__ == "__main__":
     
     try:
         
-        lastob = datetime.utcnow()
-        lastob = lastob.replace(year=1, second=0)
-        
         #infinitely looping, getting observation every 15 minutes
         while True:
             
             if int(open("activelogging","r").read().strip()):
+                
+                try:
+                    lastob = datetime.strptime(open("lastob","r").read().strip())
+                except FileNotFoundError:
+                    lastob = datetime(1,1,1) #definitely more than 15 minutes ago
+                    
                 cdt = datetime.utcnow()
                 if (cdt - lastob).total_seconds() >= intervalsec:
                     print(f"[+] Starting wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                     wxlogger.log(LightningThread)
                     print(f"[+] Finished wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
-                    lastob = cdt
+                    
+                    with open("lastob","w") as f:
+                        f.write(datetime.strftime(lastob,'%Y%m%d %H:%M'))
             
-            time.sleep(10) #10 second sleep between time checks
+            time.sleep(30) #30 second sleep between time checks
                     
         
     except KeyboardInterrupt:
