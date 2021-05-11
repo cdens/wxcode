@@ -1,0 +1,5 @@
+*.py_old
+*.txt
+.config
+activelogging
+__pycache__/
