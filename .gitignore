@@ -1,3 +1,4 @@
+*.swp
 *.py_old
 *.txt
 .config
