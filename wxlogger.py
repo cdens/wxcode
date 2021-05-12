@@ -2,6 +2,7 @@
 #Logger to record met output and save it to necessary locations
 from os import path, remove
 import datetime as dt
+import threading
 import geopy.distance
 import log_bme280, windspeed, winddir, GPSinteract
 import webserverinteraction as web
@@ -14,7 +15,65 @@ from time import sleep
 # fix lightning logger
 # add GPSupdate carry forward so server will update next cycle if previous one failed
 
-def log(LightningThread):
+class WeatherLogger(threading.thread):
+    
+    def __init__(self):
+        super().__init__()
+        
+        #specify interval (minutes) for observations
+        self.isLogging = False
+        self.intervalmin = 15 #minutes
+        self.intervalsec = self.intervalmin*60 #to seconds
+        self.locked = False
+        
+    def change_lock(self,status):
+        self.locked = bool(int(open("activelogging","r").read().strip()))
+        
+    def get_logging_status(self):
+        return self.isLogging
+        
+    def set_logging_status(self,status):
+        self.isLogging = status
+        
+    def run_logger(self):
+        if not self.isLogging:
+            self.isLogging = True
+            log()
+            self.isLogging = False
+            
+        
+    def run(self):
+        try:
+            #infinitely looping, getting observation every 15 minutes
+            while True:
+                if int(open("activelogging","r").read().strip()) and not self.locked:
+            
+                    #getting last observation time, default to something more than logging interval period
+                    try:
+                        lastob = dt.datetime.strptime(open("lastob","r").read().strip())
+                    except FileNotFoundError:
+                        lastob = dt.datetime(1,1,1) #definitely more than 15 minutes ago
+                        
+                    cdt = dt.datetime.utcnow()
+                    if (cdt - lastob).total_seconds() >= self.intervalsec:
+                        
+                        print(f"[+] Starting wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
+                        self.run_logger()
+                        print(f"[+] Finished wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
+                                
+                        with open("lastob","w") as f:
+                            f.write(dt.datetime.strftime(cdt,'%Y%m%d %H:%M'))
+                            
+                    time.sleep(30) #30 second sleep between time checks
+                        
+        except KeyboardInterrupt:
+            print("[!] Keyboard interrupt detected- cleaning up and exiting")
+            sys.exit()
+            
+
+
+
+def log():
     print("[+] Getting weather observation")
 
     #logger config variables

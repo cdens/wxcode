@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
-
 #Single point of control for all weather station logging functions
 
-import threading, sys, time 
-from datetime import datetime
-import numpy as np
-import rainlogger, lightninglogger, wxlogger
+import subprocess, sys, time 
+import rainlogger, lightninglogger, wxlogger, button_monitor
+
 
 if __name__ == "__main__":
     
     print("[+] Beginning PiWxStation Logger")
     
-    #starting separate threads for lightning and rain logging since those sensors must be monitored constantly
+    #Each Thread's lock system is called like
+    #Thread.change_lock(True) to lock and Thread.change_lock(False) to unlock
+    
     print("[+] Starting rain logging thread")
-    rainThread = threading.Thread(target=rainlogger.runRainLogger)
-    rainThread.start()
+    RainThread = rainlogger.RainBucketThread()
+    RainThread.start()
     print("[+] Rain logging thread initiated")
     
     print("[+] Starting lightning logging thread")
@@ -22,39 +22,47 @@ if __name__ == "__main__":
     LightningThread.start()
     print("[+] Lightning logging thread initiated")
     
-    
-    #specify interval (minutes) for observations
-    intervalmin = 15 #minutes
-    intervalsec = intervalmin*60 #to seconds
-    
-    
-    time.sleep(2)
     print("[+] Starting WxStation logger loop")
+    WxLogger = wxlogger.WeatherLogger()
+    WxLogger.start()
     
-    try:
+    wxthreads = [WxLogger, LightningThread, RainThread]
+    
+    #listening for button inputs to start/stop weather station
+    ButtonThread = button_monitor.ButtonThread()
+    ButtonThread.start()
+    
+    while True:
+        status = ButtonThread.get_status()
         
-        #infinitely looping, getting observation every 15 minutes
-        while True:
+        if status:
+            ButtonThread.set_status(0)
             
-            if int(open("activelogging","r").read().strip()):
+            #short push w/ logger inactive- start logger
+            if status == 1: 
+                print("Starting logging")
+                for t in wxthreads:
+                    t.change_lock(False)
+                with open("activelogging","w") as f:
+                    f.write("1")    
+            
+            #short push w/ logger active- log current conditions
+            elif status == 2: 
+                print("Collecting new weather observation")
+                WxLogger.run_logger()
                 
-                try:
-                    lastob = datetime.strptime(open("lastob","r").read().strip())
-                except FileNotFoundError:
-                    lastob = datetime(1,1,1) #definitely more than 15 minutes ago
-                    
-                cdt = datetime.utcnow()
-                if (cdt - lastob).total_seconds() >= intervalsec:
-                    print(f"[+] Starting wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
-                    wxlogger.log(LightningThread)
-                    print(f"[+] Finished wxlogger for observation time {datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
-                    
-                    with open("lastob","w") as f:
-                        f.write(datetime.strftime(lastob,'%Y%m%d %H:%M'))
+            #medium push- inactivate logger
+            elif status == 3:
+                print("Terminating logging") 
+                for t in wxthreads:
+                    t.change_lock(True)
+                with open("activelogging","w") as f:
+                    f.write("0")
             
-            time.sleep(30) #30 second sleep between time checks
-                    
-        
-    except KeyboardInterrupt:
-        print("[!] Keyboard interrupt detected- cleaning up and exiting")
-        sys.exit()
+            #long push- shutdown weather station  
+            elif status == 4:
+                print("Shutting down")
+                cmd = "sudo shutdown -h now"
+                subprocess.run(cmd.split())
+                
+        time.sleep(2) #2 second delay between input checks

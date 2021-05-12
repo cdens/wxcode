@@ -19,8 +19,7 @@ def runLightningLogger():
     currentLightningThread = LightningThread()
     currentLightningThread.start()
     
-
-        
+    
 
 class LightningThread(threading.Thread):
     
@@ -30,17 +29,17 @@ class LightningThread(threading.Thread):
         
         GPIO.setmode(GPIO.BCM)
         
-        self.locked = False
+        self.locked = bool(int(open("activelogging","r").read().strip()))
     
         #file to write to
         with open(".config") as c:
             lines = c.read().split("\n")
-            logfile = lines[1].split(' ')[1].strip()
-            dateformat = lines[3].split(' ')[1].strip()
+            self.logfile = lines[1].split(' ')[1].strip()
+            self.dateformat = lines[3].split(' ')[1].strip()
             
         #initializing lightning log
-        with open(logfile,"w") as f:
-            f.write(dt.datetime.strftime(dt.datetime.utcnow(), dateformat) + "\n")
+        if not self.locked:
+            self.init_countfile()
             
         self.isConnected = False
         self.numAttempts = 0
@@ -49,8 +48,15 @@ class LightningThread(threading.Thread):
         self.maxAttempts = 20 #stop trying after 20 failed connects
         self.noise_floor = 3 
         self.watchdog_threshold = 3
-        
     
+        
+    def init_countfile(self):
+        if path.exists(self.logfile)
+            remove(self.logfile)
+        with open(self.logfile,"w") as f:
+            f.write(datetime.strftime(datetime.utcnow(), self.dateformat) + "\n")
+    
+            
     def change_lock(self, status):
         self.locked = status
         
@@ -97,31 +103,34 @@ class LightningThread(threading.Thread):
             
     def run(self):
         
-        self.attempt_connect()
-        
-        #detector loop here
-        while True:
+        try:
+            self.attempt_connect()
             
-            GPIO.setmode(GPIO.BCM)
+            #detector loop here
+            while True:
+                
+                GPIO.setmode(GPIO.BCM)
+                
+                if not self.locked:
+                    if self.interrupt.value:
+                        itype = self.detector.read_interrupt_register()
             
-            if not self.locked:
-                if self.interrupt.value:
-                    itype = self.detector.read_interrupt_register()
-        
-                    if itype == self.detector.LIGHTNING:
-                        dist = self.detector.distance_to_storm
-                        energy = self.detector.lightning_energy
+                        if itype == self.detector.LIGHTNING:
+                            dist = self.detector.distance_to_storm
+                            energy = self.detector.lightning_energy
+                            
+                            if dist > 1 and energy > 0:
+                                with open(self.logfile,"a") as f:
+                                    f.write(f"{dist},{energy}\n")
+                                print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
+                                web.postlightningstrike(dist,energy)
+            
+                                self.detector.clear_statistics()
                         
-                        if dist > 1 and energy > 0:
-                            with open(logfile,"a") as f:
-                                f.write(f"{dist},{energy}\n")
-                            print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
-                            web.postlightningstrike(dist,energy)
-        
-                            self.detector.clear_statistics()
-                    
-    
-            sleep(0.1)
+                sleep(0.1)
+                
+        except KeyboardInterrupt:
+            GPIO.cleanup()
 
             
 
