@@ -15,7 +15,7 @@ def main(url, needsGPSupdate):
     
     wxthreads = []
     
-    Logger.debug("[+] Starting rain logging thread")
+    Logger.info("[+] Starting rain logging thread")
     try:
         RainThread = rainlogger.RainBucketThread()
         Logger.debug("[+] Rain logging thread initiated")
@@ -27,7 +27,7 @@ def main(url, needsGPSupdate):
     Logger.debug("[+] Starting lightning logging thread")
     try:
         LightningThread = lightninglogger.LightningThread(url=url)
-        Logger.debug("[+] Lightning logging thread initiated")
+        Logger.info("[+] Lightning logging thread initiated")
         wxthreads.append(LightningThread)
     except Exception as e:
         Logger.error("[!] Lightning logger failed to initiate")
@@ -75,7 +75,7 @@ def main(url, needsGPSupdate):
             #short push w/ logger active- log current conditions
             elif status == 2: 
                 Logger.debug("Button press- collecting new weather observation")
-                WxLogger.run_logger(url, True) #pushing button will autoupdate GPS position for webserver
+                WxLogger.run_logger() 
                 
             #medium push- inactivate logger
             elif status == 3:
@@ -103,7 +103,7 @@ if __name__ == "__main__":
     url = open("serveraddress","r").read().strip()
     needsGPSupdate = True
     
-    currentLevel = logging.DEBUG #DEBUG, INFO, WARNING, ERROR
+    currentLevel = logging.INFO #DEBUG, INFO, WARNING, ERROR
     dtgstr = datetime.strftime(datetime.utcnow(),"%Y%m%d%H%M")
     logfile = f"wxinfo_{dtgstr}.log"
     

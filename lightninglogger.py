@@ -84,7 +84,7 @@ class LightningThread(threading.Thread):
                 
             #checking whether receiver is communicating properly- terminating if not
             if self.detector.connected:
-                Logger.debug("[+] Lightning detector connected")
+                Logger.info("[+] Lightning detector connected")
                 self.isConnected = True
             else:
                 self.numAttempts += 1
@@ -93,7 +93,7 @@ class LightningThread(threading.Thread):
             
     
         if not self.isConnected: #all connect attempts failed
-            Logger.error(f"[-] All detector connect attempts failed- terminating")
+            Logger.warning(f"[-] All detector connect attempts failed- terminating")
             sys.exit()
         
     
