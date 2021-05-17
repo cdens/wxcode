@@ -77,7 +77,8 @@ if __name__ == "__main__":
     needsGPSupdate = True
     
     currentLevel = logging.DEBUG #DEBUG, INFO, WARNING, ERROR
-    logfile = f"wxinfo_{datetime.strftime(datetime.utcnow(),"%Y%m%d%H%M")}.log"
+    dtgstr = datetime.strftime(datetime.utcnow(),"%Y%m%d%H%M")
+    logfile = f"wxinfo_{dtgstr}.log"
     
     print("Starting PiWxStation- appending log information to {logfile}")
     Logger.basicConfig(filename=logfile, encoding="utf-8", level=currentLevel)
