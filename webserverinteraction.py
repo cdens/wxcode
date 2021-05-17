@@ -38,14 +38,15 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,passw
     
     try:
         req = requests.post(url, data = myobj, timeout = 10)
+        
+        if req.text == "SUCCESS":
+            return True
+        else:
+            Logger.error(f"[!] Server returned non success code: {req.text}")
             
     except Exception as e:
         Logger.warning(f"[!] Unable to connect to {url}")       
-    
-    if req.text == "SUCCESS":
-        return True
-    else:
-        Logger.error(f"[!] Server returned non success code: {req.text}")
+        
             
     return False
     

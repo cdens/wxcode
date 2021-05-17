@@ -62,7 +62,7 @@ def main(url, needsGPSupdate):
         status = ButtonThread.get_status()
         
         if status:
-            ButtonThread.set_status(0)
+            ButtonThread.change_status(0)
             
             #short push w/ logger inactive- start logger
             if status == 1: 
