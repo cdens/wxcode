@@ -1,43 +1,44 @@
 #! /usr/bin/env python3
 # configures raspberry pi to listen to button hooked up to ground and GPIO pin to control Pi actions
     
-import time, threading
+import time, threading, logging
 import RPi.GPIO as GPIO
 
+Logger = logging.getLogger(__name__)
 
 class ButtonThread(threading.Thread):
     
     def __init__(self):
-        super().__init__(self)
+        super().__init__()
         
         self.button_num = 16
-        self.status = 0
-        self.locked = False
+        self._status = 0
+        self._locked = False
         
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.button_num, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         
         
     def change_lock(self,lockStatus):
-        self.locked = lockStatus
+        self._locked = lockStatus
         
     def change_status(self,status):
-        self.status = status
+        self._status = status
         
     def get_status(self):
-        return self.status
+        return self._status
         
     def run(self):
         
         try:
             while True:
-                if not self.locked:
-                    GPIO.wait_for_edge(button_num, GPIO.FALLING)
+                if not self._locked:
+                    GPIO.wait_for_edge(self.button_num, GPIO.FALLING)
                     
                     start = time.time()
                     time.sleep(0.2) #allowing voltage to drop
                 
-                    while GPIO.input(button_num) == GPIO.LOW: #waiting for button release
+                    while GPIO.input(self.button_num) == GPIO.LOW: #waiting for button release
                         time.sleep(0.01)
                         
                     buttonTime = time.time() - start #getting button press duration

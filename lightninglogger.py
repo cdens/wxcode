@@ -27,7 +27,7 @@ class LightningThread(threading.Thread):
         GPIO.setmode(GPIO.BCM)
         
         self.url = url + "/lightningupdate"
-        self.locked = bool(int(open("activelogging","r").read().strip()))
+        self._locked = bool(int(open("activelogging","r").read().strip()))
     
         #file to write to
         with open(".config") as c:
@@ -56,7 +56,7 @@ class LightningThread(threading.Thread):
     
             
     def change_lock(self, status):
-        self.locked = status
+        self._locked = status
         
         
     def attempt_connect(self):
@@ -109,7 +109,7 @@ class LightningThread(threading.Thread):
                 
                 GPIO.setmode(GPIO.BCM)
                 
-                if not self.locked:
+                if not self._locked:
                     if self.interrupt.value:
                         itype = self.detector.read_interrupt_register()
             

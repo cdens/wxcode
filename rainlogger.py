@@ -14,22 +14,22 @@ class RainBucketThread(threading.Thread):
         super().__init__()
         
         self.pin = 13
-        self.locked = bool(int(open("activelogging","r").read().strip()))
+        self._locked = bool(int(open("activelogging","r").read().strip()))
         
         with open(".config") as c:
             lines = c.read().split("\n")
             self.logfile = lines[2].split(' ')[1].strip()
             self.dateformat = lines[3].split(' ')[1].strip()
         
-        if not self.locked:
+        if not self._locked:
             self.init_countfile()
             
         Logger.debug("[+] Rain logger initialized- configuring logger")
         
         
     def change_lock(self, status):
-        self.locked = status
-        if not self.locked:
+        self._locked = status
+        if not self._locked:
             self.init_countfile()
     
     def init_countfile(self):
@@ -41,7 +41,7 @@ class RainBucketThread(threading.Thread):
     def logBucketTips(self,pin):
         
         def voltageChangeCallbackCounter(pin):
-            if not self.locked:
+            if not self._locked:
                 with open(self.logfile,"a") as f:
                     f.write("switch\n")
     
