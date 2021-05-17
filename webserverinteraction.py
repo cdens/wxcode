@@ -5,11 +5,23 @@ import requests, datetime, logging
 Logger = logging.getLogger(__name__)
 
 
+
 def postlightningstrike(dist,energy,dtg,strikeurl): #TODO: send lightning updates to server
     test = 1
     return
 
 
+
+
+
+def postGPSpositionchange(lat,lon,gpsurl): #TODO: send GPS position updates to server
+    success = False
+    return success
+    
+    
+    
+    
+    
 def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,password,url):
     success = False 
     
@@ -30,15 +42,15 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,passw
             return True
         else:
             Logger.error(f"[!] Server returned non success code: {x.text}")
-            
+    
+    except ConnectionError, ConnectionRefusedError:
+        Logger.error(f"[!] Unable to connect to {url}")       
             
     except Exception as e:
-        Logger.error(f"[!] Server update error for ob {cdtgstr}: {errorcode}")
+        Logger.error(f"[!] Server update error for ob {cdtgstr}")
         Logger.exception(e)
         
     return False
-
-
-def postGPSpositionchange(lat,lon,gpsurl): #TODO: send GPS position updates to server
-    success = False
-    return success
+    
+    
+    
