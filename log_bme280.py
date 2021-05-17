@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
 
-import bme280
-import smbus2
-import time
+import bme280, smbus2, time, logging
 
+Logger = logging.getLogger(__name__)
 
 #retrieve and return single observation from BME280 (function called by WxStation Logger)
 def retrieve_bme280_ob():
@@ -35,7 +34,7 @@ def log_bme280_to_cmd():
             P = obs.pressure
             T = obs.temperature
             
-            print(f"\r [+] Temperature: {T:5.2f} degC, Humidity: {q:5.2f} %, Pressure: {P:6.1f} mb", end=" ")
+            Logger.debug(f"\r [+] Temperature: {T:5.2f} degC, Humidity: {q:5.2f} %, Pressure: {P:6.1f} mb", end=" ")
             time.sleep(1)
  
 
@@ -52,7 +51,7 @@ def get_mean_bme280_obs(num,dt):
     rh = 0.
     pres = 0.
 
-    print("[+] Starting BME280 obs")
+    Logger.debug("[+] Starting BME280 obs")
 
     port = 1 
     address = 0x77
@@ -70,7 +69,7 @@ def get_mean_bme280_obs(num,dt):
             rh += q
             pres += P
 
-            print(f"[+] Got observation {no} of {num}")
+            Logger.debug(f"[+] Got observation {no} of {num}")
             
             time.sleep(dt)
         
@@ -78,7 +77,7 @@ def get_mean_bme280_obs(num,dt):
     rh = rh/no
     pres = pres/no
     
-    print("[+] Finished BME280 observation cycle")
+    Logger.debug("[+] Finished BME280 observation cycle")
 
     return temp, rh, pres
     

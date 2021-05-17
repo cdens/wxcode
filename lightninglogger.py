@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
 
 from time import sleep
-import threading
-
-import sys
-import board
-import busio
-import digitalio
+import sys, board, busio, digitalio, logging, threading
 import sparkfun_qwiicas3935
 import webserverinteraction as web
 import datetime as dt
 import RPi.GPIO as GPIO
 
-
+Logger = logging.getLogger(__name__)
 
 def runLightningLogger():
     
@@ -23,12 +18,13 @@ def runLightningLogger():
 
 class LightningThread(threading.Thread):
     
-    def __init__(self):
+    def __init__(self,url):
         
         super().__init__()
         
         GPIO.setmode(GPIO.BCM)
         
+        self.url = url + "/lightningupdate"
         self.locked = bool(int(open("activelogging","r").read().strip()))
     
         #file to write to
@@ -86,16 +82,16 @@ class LightningThread(threading.Thread):
                 
             #checking whether receiver is communicating properly- terminating if not
             if self.detector.connected:
-                print("[+] Lightning detector connected")
+                Logger.debug("[+] Lightning detector connected")
                 self.isConnected = True
             else:
                 self.numAttempts += 1
-                print(f"[-] Detector connect attempt {self.numAttempts} of {self.maxAttempts} failed")
+                Logger.debug(f"[-] Detector connect attempt {self.numAttempts} of {self.maxAttempts} failed")
                 sleep(1)
             
     
         if not self.isConnected: #all connect attempts failed
-            print(f"[-] All detector connect attempts failed- terminating")
+            Logger.error(f"[-] All detector connect attempts failed- terminating")
             sys.exit()
         
     
@@ -122,8 +118,9 @@ class LightningThread(threading.Thread):
                             if dist > 1 and energy > 0:
                                 with open(self.logfile,"a") as f:
                                     f.write(f"{dist},{energy}\n")
-                                print(f"[+] Lightning strike detected at {dt.datetime.strftime(dt.datetime.utcnow(),dateformat)}, {dist} km away, energy={energy}")
-                                web.postlightningstrike(dist,energy)
+                                cdtg = dt.datetime.strftime(dt.datetime.utcnow(),dateformat)
+                                Logger.debug(f"[+] Lightning strike detected at {cdtg}, {dist} km away, energy={energy}")
+                                web.postlightningstrike(dist,energy,cdtg, self.url)
             
                                 self.detector.clear_statistics()
                         
@@ -131,6 +128,8 @@ class LightningThread(threading.Thread):
                 
         except KeyboardInterrupt:
             GPIO.cleanup()
+        except Exception as e:
+            Logger.exception(e)
 
             
 

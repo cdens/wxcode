@@ -1,7 +1,9 @@
 #!/usr/bin/env python3 
 
-import time, datetime
+import time, datetime, logging
 import RPi.GPIO as GPIO
+
+Logger = logging.getLogger(__name__)
 
 class WindSpeedLogger:
 
@@ -59,7 +61,7 @@ def pollanemometer():
     return spdcheck.pollanemometer() #returns wind speed
 
 if  __name__ == "__main__":
-    print(f"[+] Starting wind speed measurement for 10 seconds")
+    Logger.debug(f"[+] Starting wind speed measurement for 10 seconds")
     wspd = pollanemometer()
-    print(f"Measured wind speed: {wspd} mph")
+    Logger.debug(f"Measured wind speed: {wspd} mph")
 

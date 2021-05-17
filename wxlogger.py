@@ -2,23 +2,22 @@
 #Logger to record met output and save it to necessary locations
 from os import path, remove
 import datetime as dt
-import threading
+import threading, logging, traceback
 import geopy.distance
 import log_bme280, windspeed, winddir, GPSinteract
 import webserverinteraction as web
-import traceback
 from time import sleep
 
-#TODO:
-# recalibrate winds
-# add stuff for solar
-# fix lightning logger
-# add GPSupdate carry forward so server will update next cycle if previous one failed
+Logger = logging.getLogger(__name__)
+
 
 class WeatherLogger(threading.thread):
     
-    def __init__(self):
+    def __init__(self, url, needsGPSupdate):
         super().__init__()
+        
+        self.url = url
+        self.needsGPSupdate = needsGPSupdate
         
         #specify interval (minutes) for observations
         self.isLogging = False
@@ -38,7 +37,7 @@ class WeatherLogger(threading.thread):
     def run_logger(self):
         if not self.isLogging:
             self.isLogging = True
-            log()
+            self.needsGPSupdate = log(self.url, self.needsGPSupdate)
             self.isLogging = False
             
         
@@ -57,9 +56,9 @@ class WeatherLogger(threading.thread):
                     cdt = dt.datetime.utcnow()
                     if (cdt - lastob).total_seconds() >= self.intervalsec:
                         
-                        print(f"[+] Starting wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
+                        Logger.info(f"[+] Starting wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                         self.run_logger()
-                        print(f"[+] Finished wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
+                        Logger.debug(f"[+] Finished wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                                 
                         with open("lastob","w") as f:
                             f.write(dt.datetime.strftime(cdt,'%Y%m%d %H:%M'))
@@ -67,14 +66,17 @@ class WeatherLogger(threading.thread):
                     time.sleep(30) #30 second sleep between time checks
                         
         except KeyboardInterrupt:
-            print("[!] Keyboard interrupt detected- cleaning up and exiting")
+            Logger.error("[!] Keyboard interrupt detected- cleaning up and exiting")
             sys.exit()
+        except Exception as e:
+            Logger.exception(e)
             
 
 
 
-def log():
-    print("[+] Getting weather observation")
+def log(url, needsGPSupdate):
+    
+    Logger.debug("[+] Getting weather observation")
 
     #logger config variables
     reldatadir = "../wxdata/" #relative path (slash-terminated) to data directory
@@ -96,67 +98,65 @@ def log():
     curdatetimestr = curdatetime.strftime(dateformat) #converting datetime to string
 
     #checking GPS position
-    print("[+] Checking GPS position")
+    Logger.debug("[+] Checking GPS position")
     lat,lon,_,flag = GPSinteract.getcurrentposition(gpsport,10)
-    needsGPSupdate = False
     if flag == 0:
         if not path.exists(gpsfile): #identify + save GPS position if one isn't saved
-            print(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
+            Logger.warning(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
             with open(gpsfile,"w") as f:
                 GPSinteract.writeGPSfile(gpsfile,1,lat,lon)
             needsGPSupdate = True
         else: #checking for position change by 1 km or more
             isGood,lastlat,lastlon = GPSinteract.readGPSfile(gpsfile)
             if isGood and geopy.distance.distance((lat,lon),(lastlat,lastlon)).km >= 1:
-                print(f"[+] GPS position changed by more than 1 km, from (lat={lastlat}, lon={lastlon}) to (lat={lat}, lon={lon})), logging new position")
+                Logger.info(f"[+] GPS position changed by more than 1 km, from (lat={lastlat}, lon={lastlon}) to (lat={lat}, lon={lon})), logging new position")
                 needsGPSupdate = True
     elif flag == 2: #failed to open port
-        print("[!] Unable to communicate with specified port for GPS fix")
+        Logger.error("[!] Unable to communicate with specified port for GPS fix")
     elif flag == 1: #no valid fix data (most likely receiver is connected but not getting satellite signal)
-        print("[!] GPS request timed out")
+        Logger.error("[!] GPS request timed out")
   
     #uploading/storing GPS position if necessary
     if needsGPSupdate:
-        print("[+] Posting updated position to webserver")
-        success = web.postGPSpositionchange(lat,lon)
+        Logger.debug("[+] Posting updated position to webserver")
+        gpsurl = url + "/positionupdate"
+        success = web.postGPSpositionchange(lat,lon,gpsurl)
         if success:
-            print("[+] Position upload successful, logging to file")
+            Logger.debug("[+] Position upload successful, logging to file")
             GPSinteract.writeGPSfile(gpsfile,True,lat,lon)
+            needsGPSupdate = False #update complete
         else:
-            print("[-] Position upload unsuccessful, waiting until next observation to reattempt")
+            Logger.warning("[-] Position upload unsuccessful, waiting until next observation to reattempt")
 
 
     #getting temperature/humidity/pressure
-    print("[+] Getting temperature/humidity/pressure")
+    Logger.debug("[+] Getting temperature/humidity/pressure")
     try:
         T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
-    except Exception:
-        print("[-] Error raised during BME280 logger call:")
-        traceback.print_exc()
+    except Exception as e:
+        Logger.exception(e)
         T = 0
         q = 0
         P = 0
     
     #getting wind speed
-    print("[+] Getting wind speed")
+    logging.debug("[+] Getting wind speed")
     try:
         wspd = windspeed.pollanemometer()
-    except Exception:
-        print("[-] Error raised in anemometer logger call:")
-        traceback.print_exc()
+    except Exception as e:
+        Logger.exception(e)
         wspd = 0
 
     #getting wind direction 
-    print("[+] Getting wind direction")
+    Logger.debug("[+] Getting wind direction")
     try:
         wdir = winddir.getwinddirection()
-    except Exception:
-        print("[-] Error raised in wind direction logger call:")
-        traceback.print_exc()
+    except Exception as e:
+        Logger.exception(e)
         wdir = 0
 
     #getting number of lightning strikes
-    print("[+] Reading lightning strike data")
+    Logger.debug("[+] Reading lightning strike data")
     strikeRate = 0
     if path.exists(lightninglogfile):
         with open(lightninglogfile) as f:
@@ -168,10 +168,10 @@ def log():
         with open(lightninglogfile,"w") as f:
             f.write(dt.datetime.strftime(curdatetime,dateformat) + "\n")
     else:
-        print("[-] Lightning strike file not found!")
+        Logger.error("[-] Lightning strike file not found!")
 
     #getting rainfall
-    print("[+] Reading rainfall rate data")
+    Logger.debug("[+] Reading rainfall rate data")
     rainRate = 0
     if path.exists(rainlogfile):
         with open(rainlogfile) as f:
@@ -183,7 +183,7 @@ def log():
         with open(rainlogfile,"w") as f:
             f.write(dt.datetime.strftime(curdatetime,dateformat) + "\n")
     else:
-        print("[-] Rainfall rate file not found!")
+        Logger.error("[-] Rainfall rate file not found!")
 
     solarVal = 0 #solar intensity (TODO)
 
@@ -191,18 +191,23 @@ def log():
     
     #line to send to file
     curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f} \n" #ob line to be transmitted
-    print(f"[!] Weather Observation: {curline}", end="")
+    Logger.info(f"[!] Weather Observation: {curline}", end="")
 
     #POST request for website 
-    url = open("serveraddress","r").read().strip()
-    print("[+] Sending POST with observation to server: " + url)
-    success = web.postregularupdate(curdatetimestr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
+    updateurl = url + "/addnewob"
+    Logger.debug("[+] Sending POST with observation to server: " + updateurl)
+    success = web.postregularupdate(curdatetimestr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,updateurl)
 
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
     with open(curlog,"a") as f:
         f.write(curline)
+        
+    return needsGPSupdate
 
 
 if __name__ == "__main__":
+    global needsGPSupdate, url
+    url = open("serveraddress","r").read().strip()
+    needsGPSupdate = True
     log()

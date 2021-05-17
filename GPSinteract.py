@@ -20,10 +20,12 @@ from serial.tools import list_ports
 from pynmea2 import parse
 from traceback import print_exc as trace_error
 from time import sleep
+import logging
+
+Logger = logging.getLogger(__name__)
 
 
-
-
+#test function not used by weather station
 def listcomports():
     portnums = []
     portinfo = []
@@ -34,9 +36,9 @@ def listcomports():
         #portinfo.append("{}: {} [{}]".format(port, desc, details)) #long description
     return portnums,portinfo
     
-    
-    
 
+
+#test function not used by weather station
 def listcomports_verbose():
     portnums = []
     portinfo = []
@@ -49,6 +51,7 @@ def listcomports_verbose():
 
 
 
+#test function not used by weather station
 def streamserialdata(port):
 
     #open/configure port
@@ -56,11 +59,12 @@ def streamserialdata(port):
         ii = 0
         while ii <= 100:
             ii += 1
-            print(ser.readline())
+            Logger.debug(ser.readline())
             #print(ser.readline().decode('ascii', errors='replace').strip())
 
 
-
+            
+#test function not used by weather station
 def streamgpsdata(port):
     try:
 
@@ -76,7 +80,7 @@ def streamgpsdata(port):
                         nmeaobj = parse(ser.readline().decode('ascii', errors='replace').strip())
                         isgood = True
                     except:
-                        print("Bad NMEA sentence!")
+                        Logger.debug("Bad NMEA sentence!")
                         isgood = False
 
                     if isgood:
@@ -90,7 +94,7 @@ def streamgpsdata(port):
                             lonsign = 'E'
                         else:
                             lonsign = 'W'
-                        print('Date: {}     Latitude: {}{}     Longitude: {}{}'.format(nmeaobj.datetime,abs(lat),latsign,abs(lon),lonsign))
+                        Logger.debug('Date: {}     Latitude: {}{}     Longitude: {}{}'.format(nmeaobj.datetime,abs(lat),latsign,abs(lon),lonsign))
                         ii = 0
 
                 except:
@@ -99,9 +103,9 @@ def streamgpsdata(port):
                     sleep(0.1)
 
     except KeyboardInterrupt:
-        print('Terminated with keyboard interrupt!')
-    except Exception:
-        trace_error()
+        Logger.error('Terminated with keyboard interrupt!')
+    except Exception as e:
+        Logger.exception(e)
 
 
 
@@ -138,8 +142,8 @@ def getcurrentposition(port,numattempts):
 
         return 0,0,0,2 #somehow exits loop successfully and ends "with" statement w/t getting position
 
-    except Exception: #fails to connect to serial port
-        trace_error()
+    except Exception as e:
+        Logger.exception(e)
         return 0,0,0,2
         
         

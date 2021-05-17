@@ -31,9 +31,8 @@ def get_channel_values():
     return channels
     
     
-    
+#function for testing only- not called by wxstation logger
 def print_voltages(channels):
-    
     #print output from channels
     for (i,ch) in enumerate(channels):
         print(f"Channel {i}: value={ch.value}, voltage={ch.voltage}")

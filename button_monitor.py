@@ -4,6 +4,9 @@
 import time, threading
 import RPi.GPIO as GPIO
 
+Logger = logging.getLogger(__name__)
+
+
 class ButtonThread(threading.thread):
     
     def __init__(self):
@@ -59,6 +62,8 @@ class ButtonThread(threading.thread):
                         
         except KeyboardInterrupt:    
             GPIO.cleanup()
+        except Exception as e:
+            Logger.exception(e)
             
             
 if __name__ == "__main__":

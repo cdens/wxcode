@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 # WxStation web server interaction (data upload)
-import requests, datetime
+import requests, datetime, logging
+
+Logger = logging.getLogger(__name__)
 
 
-
-def postlightningstrike(dist,energy):
+def postlightningstrike(dist,energy,dtg,strikeurl): #TODO: send lightning updates to server
     test = 1
     return
 
@@ -23,21 +24,21 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,passw
                 'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
                 'strikes':str(numStrikes)} #number lightning strikes in period
     
-    success = False
-    errorcode = "Connection Failed"
     try:
         req = requests.post(url, data = myobj, timeout = 10)
         if x.text == "SUCCESS":
-            success = True
+            return True
         else:
-            errorcode = x.text
+            Logger.error(f"[!] Server returned non success code: {x.text}")
             
-    except:
-        print(f"[!] Server update error for ob {cdtgstr}: {errorcode}")
+            
+    except Exception as e:
+        Logger.error(f"[!] Server update error for ob {cdtgstr}: {errorcode}")
+        Logger.exception(e)
+        
+    return False
 
-    return success
 
-
-def postGPSpositionchange(lat,lon):
+def postGPSpositionchange(lat,lon,gpsurl): #TODO: send GPS position updates to server
     success = False
     return success
