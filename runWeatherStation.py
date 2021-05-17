@@ -13,11 +13,13 @@ def main(url, needsGPSupdate):
     #Each Thread's lock system is called following:
     #Thread.change_lock(True) to lock and Thread.change_lock(False) to unlock
     
+    wxthreads = []
+    
     Logger.debug("[+] Starting rain logging thread")
     try:
         RainThread = rainlogger.RainBucketThread()
-        RainThread.start()
         Logger.debug("[+] Rain logging thread initiated")
+        wxthreads.append(RainThread)
     except Exception as e:
         Logger.error("[!] Rain logger failed to initiate")
         Logger.exception(e)
@@ -25,22 +27,37 @@ def main(url, needsGPSupdate):
     Logger.debug("[+] Starting lightning logging thread")
     try:
         LightningThread = lightninglogger.LightningThread(url=url)
-        LightningThread.start()
         Logger.debug("[+] Lightning logging thread initiated")
+        wxthreads.append(LightningThread)
     except Exception as e:
         Logger.error("[!] Lightning logger failed to initiate")
         Logger.exception(e)
     
     Logger.debug("[+] Starting WxStation logger loop")
-    WxLogger = wxlogger.WeatherLogger(url=url, needsGPSupdate=needsGPSupdate)
-    WxLogger.start()
+    try:
+        WxLogger = wxlogger.WeatherLogger(url=url, needsGPSupdate=needsGPSupdate)
+        wxthreads.append(WxLogger)
+    except Exception as e:
+        Logger.error("[!] WxStation logger failed to initiate")
+        Logger.exception(e)
     
-    wxthreads = [WxLogger, LightningThread, RainThread]
-    
+    try:
+        for thread in wxthreads:
+            thread.start()
+    except Exception as e:
+        Logger.error("[!] Failed to start running a thread")
+        Logger.exception(e)
+        
     #listening for button inputs to start/stop weather station
-    ButtonThread = button_monitor.ButtonThread()
-    ButtonThread.start()
+    try:
+        ButtonThread = button_monitor.ButtonThread()
+        ButtonThread.start()
+    except Exception as e:
+        Logger.error("[!] Error initiating button monitoring thread!")
+        Logger.exception(e)
     
+        
+    #button monitoring loop waiting to adjust WxStation behavior based on user input
     while True:
         status = ButtonThread.get_status()
         
