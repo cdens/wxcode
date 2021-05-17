@@ -63,7 +63,7 @@ class WeatherLogger(threading.Thread):
                         with open("lastob","w") as f:
                             f.write(dt.datetime.strftime(cdt,'%Y%m%d %H:%M'))
                             
-                    time.sleep(30) #30 second sleep between time checks
+                    sleep(30) #30 second sleep between time checks
                         
         except KeyboardInterrupt:
             Logger.error("[!] Keyboard interrupt detected- cleaning up and exiting")
