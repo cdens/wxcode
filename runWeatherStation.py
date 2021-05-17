@@ -14,14 +14,22 @@ def main(url, needsGPSupdate):
     #Thread.change_lock(True) to lock and Thread.change_lock(False) to unlock
     
     Logger.debug("[+] Starting rain logging thread")
-    RainThread = rainlogger.RainBucketThread()
-    RainThread.start()
-    Logger.debug("[+] Rain logging thread initiated")
+    try:
+        RainThread = rainlogger.RainBucketThread()
+        RainThread.start()
+        Logger.debug("[+] Rain logging thread initiated")
+    except Exception as e:
+        Logger.error("[!] Rain logger failed to initiate")
+        Logger.exception(e)
     
     Logger.debug("[+] Starting lightning logging thread")
-    LightningThread = lightninglogger.LightningThread(url=url)
-    LightningThread.start()
-    Logger.debug("[+] Lightning logging thread initiated")
+    try:
+        LightningThread = lightninglogger.LightningThread(url=url)
+        LightningThread.start()
+        Logger.debug("[+] Lightning logging thread initiated")
+    except Exception as e:
+        Logger.error("[!] Lightning logger failed to initiate")
+        Logger.exception(e)
     
     Logger.debug("[+] Starting WxStation logger loop")
     WxLogger = wxlogger.WeatherLogger(url=url, needsGPSupdate=needsGPSupdate)
@@ -72,6 +80,8 @@ def main(url, needsGPSupdate):
     
 if __name__ == "__main__":
     
+    debugging = True
+    
     #first GPS cycle will automatically be pushed to webserver
     url = open("serveraddress","r").read().strip()
     needsGPSupdate = True
@@ -80,13 +90,16 @@ if __name__ == "__main__":
     dtgstr = datetime.strftime(datetime.utcnow(),"%Y%m%d%H%M")
     logfile = f"wxinfo_{dtgstr}.log"
     
-    print("Starting PiWxStation- appending log information to {logfile}")
+    print(f"Starting PiWxStation- appending log information to {logfile}")
     
     #creating logger
     Logger = logging.getLogger(__name__)
-    logging.basicConfig(level=currentLevel, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
+    if debugging:
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+    else:
+        logging.basicConfig(level=currentLevel, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
     
-    main()
+    main(url, needsGPSupdate)
     
     
     

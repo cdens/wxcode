@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from time import sleep
+from os import remove, path
 import sys, board, busio, digitalio, logging, threading
 import sparkfun_qwiicas3935
 import webserverinteraction as web

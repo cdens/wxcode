@@ -3,7 +3,7 @@
 import time, threading, logging
 from datetime import datetime
 import RPi.GPIO as GPIO
-from os import remove,path
+from os import remove, path
 
 Logger = logging.getLogger(__name__)
 
