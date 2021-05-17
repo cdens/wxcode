@@ -49,7 +49,7 @@ class WeatherLogger(threading.Thread):
             
                     #getting last observation time, default to something more than logging interval period
                     try:
-                        lastob = dt.datetime.strptime(open("lastob","r").read().strip())
+                        lastob = dt.datetime.strptime(open("lastob","r").read().strip(), '%Y%m%d %H:%M')
                     except FileNotFoundError:
                         lastob = dt.datetime(1,1,1) #definitely more than 15 minutes ago
                         
