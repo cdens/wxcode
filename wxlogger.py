@@ -190,8 +190,8 @@ def log(url, needsGPSupdate):
     
     
     #line to send to file
-    curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f} \n" #ob line to be transmitted
-    Logger.info(f"[!] Weather Observation: {curline}", end="")
+    curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f}" #ob line to be transmitted
+    Logger.info(f"[!] Weather Observation: {curline}")
 
     #POST request for website 
     updateurl = url + "/addnewob"
@@ -201,7 +201,7 @@ def log(url, needsGPSupdate):
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
     with open(curlog,"a") as f:
-        f.write(curline)
+        f.write(curline + "\n")
         
     return needsGPSupdate
 

@@ -36,7 +36,7 @@ class LightningThread(threading.Thread):
             self.dateformat = lines[3].split(' ')[1].strip()
             
         #initializing lightning log
-        if not self.locked:
+        if not self._locked:
             self.init_countfile()
             
         self.isConnected = False
