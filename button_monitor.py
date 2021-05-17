@@ -4,10 +4,8 @@
 import time, threading
 import RPi.GPIO as GPIO
 
-Logger = logging.getLogger(__name__)
 
-
-class ButtonThread(threading.thread):
+class ButtonThread(threading.Thread):
     
     def __init__(self):
         super().__init__(self)

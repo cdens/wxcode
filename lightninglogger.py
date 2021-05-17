@@ -47,7 +47,7 @@ class LightningThread(threading.Thread):
     
         
     def init_countfile(self):
-        if path.exists(self.logfile)
+        if path.exists(self.logfile):
             remove(self.logfile)
         with open(self.logfile,"w") as f:
             f.write(datetime.strftime(datetime.utcnow(), self.dateformat) + "\n")

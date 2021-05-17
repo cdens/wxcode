@@ -2,10 +2,10 @@
 #Single point of control for all weather station logging functions
 
 import subprocess, sys, time, logging
+import logging.config
 import rainlogger, lightninglogger, wxlogger, button_monitor
 from datetime import datetime
 
-Logger = logging.getLogger(__name__)
 
 def main(url, needsGPSupdate):
     
@@ -81,5 +81,17 @@ if __name__ == "__main__":
     logfile = f"wxinfo_{dtgstr}.log"
     
     print("Starting PiWxStation- appending log information to {logfile}")
-    Logger.basicConfig(filename=logfile, encoding="utf-8", level=currentLevel)
+    
+    #creating logger
+    logging.config.fileConfig(logfile)
+    Logger = logging.getLogger(__name__)
+    Logger.setLevel(currentLevel)    
+
+    ch = logging.StreamHandler() #console handler
+    ch.setLevel(currentLevel)
+    
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') #formatter
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
+    
     main()

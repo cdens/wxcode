@@ -11,7 +11,7 @@ from time import sleep
 Logger = logging.getLogger(__name__)
 
 
-class WeatherLogger(threading.thread):
+class WeatherLogger(threading.Thread):
     
     def __init__(self, url, needsGPSupdate):
         super().__init__()

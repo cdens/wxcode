@@ -7,7 +7,7 @@ from os import remove,path
 
 Logger = logging.getLogger(__name__)
 
-class RainBucketThread(threading.thread):
+class RainBucketThread(threading.Thread):
     
     def __init__(self):
         
@@ -33,7 +33,7 @@ class RainBucketThread(threading.thread):
             self.init_countfile()
     
     def init_countfile(self):
-        if path.exists(self.logfile)
+        if path.exists(self.logfile):
             remove(self.logfile)
         with open(self.logfile,"w") as f:
             f.write(datetime.strftime(datetime.utcnow(), self.dateformat) + "\n")
