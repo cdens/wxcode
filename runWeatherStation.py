@@ -83,15 +83,12 @@ if __name__ == "__main__":
     print("Starting PiWxStation- appending log information to {logfile}")
     
     #creating logger
-    logging.config.fileConfig(logfile)
     Logger = logging.getLogger(__name__)
-    Logger.setLevel(currentLevel)    
-
-    ch = logging.StreamHandler() #console handler
-    ch.setLevel(currentLevel)
-    
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') #formatter
-    ch.setFormatter(formatter)
-    logger.addHandler(ch)
+    logging.basicConfig(level=currentLevel, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
     
     main()
+    
+    
+    
+    
+    
