@@ -50,7 +50,20 @@ class RainBucketThread(threading.Thread):
         #setting switch GPIO as input, pull high voltage by default
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        
+        #locking callback for 5 seconds so if the bucket is in the active position on start it won't erroneously log a tip
+        needsUnlock = False
+        if not self._locked:
+            self._locked = True
+            needsUnlock = True
+            
         GPIO.add_event_detect(self.pin, GPIO.BOTH, callback=voltageChangeCallbackCounter, bouncetime=10)
+        
+        time.sleep(5)
+        
+        if needsUnlock:
+            self._locked = False
+            needsUnlock = False
         
         Logger.debug("[+] Rain logger configured, waiting for bucket tips")
     

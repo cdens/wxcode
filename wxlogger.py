@@ -119,8 +119,7 @@ def log(url, needsGPSupdate):
     #uploading/storing GPS position if necessary
     if needsGPSupdate:
         Logger.debug("[+] Posting updated position to webserver")
-        gpsurl = url + "/positionupdate"
-        success = web.postGPSpositionchange(lat,lon,gpsurl)
+        success = web.postGPSpositionchange(lat,lon,password,url)
         if success:
             Logger.debug("[+] Position upload successful, logging to file")
             GPSinteract.writeGPSfile(gpsfile,True,lat,lon)
@@ -188,15 +187,13 @@ def log(url, needsGPSupdate):
     solarVal = 0 #solar intensity (TODO)
 
     
-    
     #line to send to file
     curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f}" #ob line to be transmitted
     Logger.info(f"[!] Weather Observation: {curline}")
 
     #POST request for website 
-    updateurl = url + "/addnewob"
-    Logger.debug("[+] Sending POST with observation to server: " + updateurl)
-    success = web.postregularupdate(curdatetimestr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,updateurl)
+    Logger.debug("[+] Sending POST with observation to server: " + url)
+    success = web.postregularupdate(curdatetimestr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,password,url)
 
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"

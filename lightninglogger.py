@@ -26,12 +26,13 @@ class LightningThread(threading.Thread):
         
         GPIO.setmode(GPIO.BCM)
         
-        self.url = url + "/lightningupdate"
+        self.url = url
         self._locked = bool(int(open("activelogging","r").read().strip()))
     
         #file to write to
         with open(".config") as c:
             lines = c.read().split("\n")
+            self.password = lines[0].split(' ')[1]
             self.logfile = lines[1].split(' ')[1].strip()
             self.dateformat = lines[3].split(' ')[1].strip()
             
@@ -41,6 +42,9 @@ class LightningThread(threading.Thread):
             
         self.isConnected = False
         self.numAttempts = 0
+        
+        #for tracking whether to update server
+        self.lastStrikeDate = dt.datetime(1,1,1)
     
         #thresholds
         self.maxAttempts = 20 #stop trying after 20 failed connects
@@ -118,11 +122,16 @@ class LightningThread(threading.Thread):
                             energy = self.detector.lightning_energy
                             
                             if dist > 1 and energy > 0:
+                                cdate = dt.datetime.utcnow()
+                                cdtg = dt.datetime.strftime(cdate,self.dateformat)
                                 with open(self.logfile,"a") as f:
-                                    f.write(f"{dist},{energy}\n")
-                                cdtg = dt.datetime.strftime(dt.datetime.utcnow(),dateformat)
+                                    f.write(f"{cdtg},{dist},{energy}\n")
+                                    
                                 Logger.debug(f"[+] Lightning strike detected at {cdtg}, {dist} km away, energy={energy}")
-                                web.postlightningstrike(dist,energy,cdtg, self.url)
+                                
+                                if (cdate - self.lastStrikeDate).total_seconds() > 60: #must be 1 minute since last update
+                                    web.postlightningstrike(dist, cdtg, self.password, self.url)
+                                    self.lastStrikeDate = cdate
             
                                 self.detector.clear_statistics()
                         

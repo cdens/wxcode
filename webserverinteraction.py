@@ -6,24 +6,53 @@ Logger = logging.getLogger(__name__)
 
 
 
-def postlightningstrike(dist,energy,dtg,strikeurl): #TODO: send lightning updates to server
-    test = 1
-    return
+def postlightningstrike(dist,dtg,password,url): #TODO: send lightning updates to server
+    myobj = {'credential': password,
+            'date':dtg,
+            'distance':str(round(dist,0))} #number lightning strikes in period
+    ext = "/strikereport"
+    
+    try:
+        req = requests.post(url + ext, data = myobj, timeout = 10)
+        
+        if req.text == "SUCCESS":
+            return True
+        else:
+            Logger.error(f"[!] Lightning POST returned non success code: {req.text}")
+            
+    except Exception as e:
+        Logger.warning(f"[!] Unable to connect to {url+ext}")       
+        
+    return False
 
 
 
 
 
-def postGPSpositionchange(lat,lon,gpsurl): #TODO: send GPS position updates to server
-    success = False
-    return success
+def postGPSpositionchange(lat,lon,password,url): #TODO: send GPS position updates to server
+    myobj = {'credential': password,
+            'latitude':str(round(lat,2)),
+            'longitude':str(round(lon,2))} #number lightning strikes in period
+    ext = "/updateGPS"
+    
+    try:
+        req = requests.post(url + ext, data = myobj, timeout = 10)
+        
+        if req.text == "SUCCESS":
+            return True
+        else:
+            Logger.error(f"[!] GPS POST returned non success code: {req.text}")
+            
+    except Exception as e:
+        Logger.warning(f"[!] Unable to connect to {url+ext}")       
+        
+    return False
     
     
     
     
     
 def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,password,url):
-    success = False 
     
     myobj = {'credential': password,
                 'date':cdtgstr,
@@ -35,17 +64,18 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,passw
                 'precip':str(round(rainRate,1)), #precipitation since last ob (cm)
                 'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
                 'strikes':str(numStrikes)} #number lightning strikes in period
+    ext = "/addnewob"
     
     try:
-        req = requests.post(url, data = myobj, timeout = 10)
+        req = requests.post(url + ext, data = myobj, timeout = 10)
         
         if req.text == "SUCCESS":
             return True
         else:
-            Logger.error(f"[!] Server returned non success code: {req.text}")
+            Logger.error(f"[!] WxObs POST returned non success code: {req.text}")
             
     except Exception as e:
-        Logger.warning(f"[!] Unable to connect to {url}")       
+        Logger.warning(f"[!] Unable to connect to {url+ext}")       
         
             
     return False
