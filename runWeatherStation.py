@@ -3,7 +3,7 @@
 
 import subprocess, sys, time, logging
 import logging.config
-import rainlogger, lightninglogger, wxlogger, button_monitor
+import rainlogger, lightninglogger, wxlogger, winddir, button_monitor
 from datetime import datetime
 
 

@@ -13,7 +13,8 @@ Logger = logging.getLogger(__name__)
 
 def runLightningLogger():
     
-    currentLightningThread = LightningThread()
+    url = open("serveraddress","r").read().strip()
+    currentLightningThread = LightningThread(url=url)
     currentLightningThread.start()
     
     
@@ -65,6 +66,13 @@ class LightningThread(threading.Thread):
         
     def attempt_connect(self):
         
+        #accessing wind direction ADC first (don't know why this has to happen but it fixed the bug)
+        Logger.debug("[+] Initializing wind direction")
+        try:
+            winddir.getwinddirection()
+        except Exception as e:
+            Logger.exception(e)
+            
         while not self.isConnected and self.numAttempts < self.maxAttempts:
 
             #interrupt pin configuration
@@ -85,7 +93,7 @@ class LightningThread(threading.Thread):
             self.detector.watchdog_threshold = self.watchdog_threshold #base level to filter out disturbers (higher = more exclusive)
             self.detector.indoor_outdoor = self.detector.INDOOR #INDOOR or OUTDOOR mode
             
-                
+            
             #checking whether receiver is communicating properly- terminating if not
             if self.detector.connected:
                 Logger.info("[+] Lightning detector connected")
@@ -145,4 +153,5 @@ class LightningThread(threading.Thread):
             
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
     runLightningLogger()
