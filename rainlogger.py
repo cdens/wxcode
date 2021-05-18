@@ -14,7 +14,7 @@ class RainBucketThread(threading.Thread):
         super().__init__()
         
         self.pin = 13
-        self._locked = bool(int(open("activelogging","r").read().strip()))
+        self._locked = not bool(int(open("activelogging","r").read().strip()))
         
         with open(".config") as c:
             lines = c.read().split("\n")

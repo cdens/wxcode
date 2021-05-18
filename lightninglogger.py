@@ -29,7 +29,7 @@ class LightningThread(threading.Thread):
         GPIO.setmode(GPIO.BCM)
         
         self.url = url
-        self._locked = bool(int(open("activelogging","r").read().strip()))
+        self._locked = not bool(int(open("activelogging","r").read().strip()))
     
         #file to write to
         with open(".config") as c:
