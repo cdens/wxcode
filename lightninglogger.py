@@ -5,6 +5,7 @@ from datetime import datetime
 from os import remove, path
 import sys, board, busio, digitalio, logging, threading
 import sparkfun_qwiicas3935
+import winddir
 import webserverinteraction as web
 import datetime as dt
 import RPi.GPIO as GPIO
