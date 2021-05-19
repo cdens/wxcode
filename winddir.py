@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
-import busio, digitalio, board
+import busio, digitalio, board, logging
 import adafruit_mcp3xxx.mcp3008 as MCP
 from adafruit_mcp3xxx.analog_in import AnalogIn
 import numpy as np
 import RPi.GPIO as GPIO
 
+Logger = logging.getLogger(__name__)
 
 
 def get_channel_values():
@@ -30,12 +31,6 @@ def get_channel_values():
         
     return channels
     
-    
-#function for testing only- not called by wxstation logger
-def print_voltages(channels):
-    #print output from channels
-    for (i,ch) in enumerate(channels):
-        print(f"Channel {i}: value={ch.value}, voltage={ch.voltage}")
 
         
         
@@ -106,9 +101,14 @@ def get_winddir_from_voltages(channels, threshold):
 def getwinddirection():
     channels = get_channel_values()
     chvoltages = []
-    for ch in channels:
+    chvoltstr = "WDir Voltages: "
+    for i,ch in enumerate(channels):
         chvoltages.append(ch.voltage)
+        chvoltstr += f"CH:{i}={ch.voltage:3.2f}V, "
     chvoltages = np.asarray(chvoltages)
+    
+    Logger.debug(chvoltstr)
+    
     winddir = get_winddir_from_voltages(chvoltages, 0.8)
     
     if winddir == -1:

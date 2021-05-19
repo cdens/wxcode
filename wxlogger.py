@@ -24,6 +24,7 @@ class WeatherLogger(threading.Thread):
         self.intervalmin = 15 #minutes
         self.intervalsec = self.intervalmin*60 #to seconds
         self.locked = False
+        self.baud = 9600
         
     def change_lock(self,status):
         self.locked = bool(int(open("activelogging","r").read().strip()))
@@ -37,7 +38,7 @@ class WeatherLogger(threading.Thread):
     def run_logger(self):
         if not self.isLogging:
             self.isLogging = True
-            self.needsGPSupdate = log(self.url, self.needsGPSupdate)
+            self.needsGPSupdate = log(self.url, self.baud, self.needsGPSupdate)
             self.isLogging = False
             
         
@@ -74,7 +75,7 @@ class WeatherLogger(threading.Thread):
 
 
 
-def log(url, needsGPSupdate):
+def log(url, baud, needsGPSupdate):
     
     Logger.debug("[+] Getting weather observation")
 
@@ -113,8 +114,10 @@ def log(url, needsGPSupdate):
                 needsGPSupdate = True
     elif flag == 2: #failed to open port
         Logger.error("[!] Unable to communicate with specified port for GPS fix")
+        needsGPSupdate = False
     elif flag == 1: #no valid fix data (most likely receiver is connected but not getting satellite signal)
         Logger.error("[!] GPS request timed out")
+        needsGPSupdate = False
   
     #uploading/storing GPS position if necessary
     if needsGPSupdate:

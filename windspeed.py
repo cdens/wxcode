@@ -51,6 +51,9 @@ class WindSpeedLogger:
         # conversion = 2*pi* 2.5 inches * 0.056818 = 0.8925
         wspd = rotations*0.8925/dt
         
+        
+        Logger.debug(f"Measured wind speed: {counts} counts, {rotations} rotations, {wspd} mph uncalibrated")
+        
         #calibration factor for wind energy loss
         #wspd = wspd*1.2
 
@@ -63,5 +66,4 @@ def pollanemometer():
 if  __name__ == "__main__":
     Logger.debug(f"[+] Starting wind speed measurement for 10 seconds")
     wspd = pollanemometer()
-    Logger.debug(f"Measured wind speed: {wspd} mph")
 

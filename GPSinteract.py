@@ -52,10 +52,10 @@ def listcomports_verbose():
 
 
 #test function not used by weather station
-def streamserialdata(port):
+def streamserialdata(port,baud):
 
     #open/configure port
-    with Serial(port, 9600, timeout=1) as ser:
+    with Serial(port, baud, timeout=1) as ser:
         ii = 0
         while ii <= 100:
             ii += 1
@@ -65,11 +65,11 @@ def streamserialdata(port):
 
             
 #test function not used by weather station
-def streamgpsdata(port):
+def streamgpsdata(port, baud):
     try:
 
         #open/configure port
-        with Serial(port, 9600, timeout=1) as ser:
+        with Serial(port, baud, timeout=1) as ser:
             ii = 0
             while ii <= 100:
                 ii += 1
@@ -110,11 +110,11 @@ def streamgpsdata(port):
 
 
 
-def getcurrentposition(port,numattempts):
+def getcurrentposition(port,baud,numattempts):
 
     try:
         # try to read a line of data from the serial port and parse
-        with Serial(port, 9600, timeout=1) as ser:
+        with Serial(port, baud, timeout=1) as ser:
 
             ii = 0
             while True: #infinite loop
