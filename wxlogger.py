@@ -24,7 +24,7 @@ class WeatherLogger(threading.Thread):
         self.intervalmin = 15 #minutes
         self.intervalsec = self.intervalmin*60 #to seconds
         self.locked = False
-        self.baud = 9600
+        self.baud = 4800
         
     def change_lock(self,status):
         self.locked = bool(int(open("activelogging","r").read().strip()))
@@ -100,7 +100,7 @@ def log(url, baud, needsGPSupdate):
 
     #checking GPS position
     Logger.debug("[+] Checking GPS position")
-    lat,lon,_,flag = GPSinteract.getcurrentposition(gpsport,10)
+    lat,lon,_,flag = GPSinteract.getcurrentposition(gpsport,baud,10)
     if flag == 0:
         if not path.exists(gpsfile): #identify + save GPS position if one isn't saved
             Logger.warning(f"[+] GPS file does not exist- logging position: lat={lat}, lon={lon}")
