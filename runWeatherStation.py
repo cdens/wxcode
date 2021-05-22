@@ -3,7 +3,7 @@
 
 import subprocess, sys, time, logging
 import logging.config
-import rainlogger, lightninglogger, wxlogger, button_monitor
+import rainlogger, lightninglogger, wxlogger, button_monitor, configupdate
 from datetime import datetime
 
 
@@ -15,9 +15,15 @@ def main(url, needsGPSupdate):
     
     wxthreads = []
     
+    #no point in encasing this in a try statement as the program can't run without it
+    Logger.info("[+] Starting configuration thread")
+    ConfigThread = configupdate.ConfigThread(".config")
+    ConfigThread.run()
+    config = ConfigThread.config
+    
     Logger.info("[+] Starting rain logging thread")
     try:
-        RainThread = rainlogger.RainBucketThread()
+        RainThread = rainlogger.RainBucketThread(config)
         Logger.debug("[+] Rain logging thread initiated")
         wxthreads.append(RainThread)
     except Exception as e:
@@ -26,7 +32,7 @@ def main(url, needsGPSupdate):
     
     Logger.debug("[+] Starting lightning logging thread")
     try:
-        LightningThread = lightninglogger.LightningThread(url=url)
+        LightningThread = lightninglogger.LightningThread(config)
         Logger.info("[+] Lightning logging thread initiated")
         wxthreads.append(LightningThread)
     except Exception as e:
@@ -35,7 +41,7 @@ def main(url, needsGPSupdate):
     
     Logger.debug("[+] Starting WxStation logger loop")
     try:
-        WxLogger = wxlogger.WeatherLogger(url=url, needsGPSupdate=needsGPSupdate)
+        WxLogger = wxlogger.WeatherLogger(config)
         wxthreads.append(WxLogger)
     except Exception as e:
         Logger.error("[!] WxStation logger failed to initiate")
@@ -90,6 +96,14 @@ def main(url, needsGPSupdate):
                 Logger.debug("Button press- shutting down")
                 cmd = "sudo shutdown -h now"
                 subprocess.run(cmd.split())
+                
+        
+        #if configuration file has been updated- push updates to individual threads
+        if ConfigThread.get_status():
+            config = ConfigThread.config
+            ConfigThread.set_status(False)
+            for t in wxthreads:
+                t.change_config(config)
                 
         time.sleep(2) #2 second delay between input checks
 

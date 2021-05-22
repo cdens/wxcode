@@ -9,17 +9,14 @@ Logger = logging.getLogger(__name__)
 
 class RainBucketThread(threading.Thread):
     
-    def __init__(self):
+    def __init__(self, config):
         
         super().__init__()
         
+        self.change_config(config)
+        
         self.pin = 13
         self._locked = not bool(int(open("activelogging","r").read().strip()))
-        
-        with open(".config") as c:
-            lines = c.read().split("\n")
-            self.logfile = lines[2].split(' ')[1].strip()
-            self.dateformat = lines[3].split(' ')[1].strip()
         
         if not self._locked:
             self.init_countfile()
@@ -31,6 +28,11 @@ class RainBucketThread(threading.Thread):
         self._locked = status
         if not self._locked:
             self.init_countfile()
+    
+    def change_config(self, config):
+        self.config = config
+        self.logfile = config["rain"]
+        self.dateformat = config["dateformat"]
     
     def init_countfile(self):
         if path.exists(self.logfile):

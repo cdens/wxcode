@@ -22,13 +22,13 @@ def runLightningLogger():
 
 class LightningThread(threading.Thread):
     
-    def __init__(self,url):
+    def __init__(self,config):
         
         super().__init__()
         
         GPIO.setmode(GPIO.BCM)
         
-        self.url = url
+        self.change_config(config)
         self._locked = not bool(int(open("activelogging","r").read().strip()))
     
         #file to write to
@@ -63,6 +63,12 @@ class LightningThread(threading.Thread):
             
     def change_lock(self, status):
         self._locked = status
+        
+    def change_config(self, config):
+        self.config = config
+        self.password = self.config["password"]
+        self.logfile = self.config["lightning"]
+        self.dateformat = self.config["dateformat"]
         
         
     def attempt_connect(self):

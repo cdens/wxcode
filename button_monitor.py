@@ -25,6 +25,9 @@ class ButtonThread(threading.Thread):
     def change_status(self,status):
         self._status = status
         
+    def change_config(self,config):
+        pass #this method is useless but simplifies the looping to update thread configurations in runWeatherStation.py
+        
     def get_status(self):
         return self._status
         
