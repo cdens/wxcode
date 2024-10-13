@@ -71,4 +71,5 @@ class RainBucketThread(threading.Thread):
     
     
 if __name__ == "__main__":
-    runRainLogger()
+    rainThread = RainBucketThread()
+    rainThread.start()
