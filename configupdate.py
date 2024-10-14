@@ -49,7 +49,7 @@ class ConfigThread(threading.Thread):
         self.update_file_hash()
         
     def update_file_hash(self):
-        self.file_hash - self.get_hash(self.filename)
+        self.file_hash = self.get_hash(self.filename)
         
         
     def get_hash(self,filename):
