@@ -126,7 +126,7 @@ if __name__ == "__main__":
     #creating logger
     Logger = logging.getLogger(__name__)
     if debugging:
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
     else:
         logging.basicConfig(level=currentLevel, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
     

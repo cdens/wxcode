@@ -14,7 +14,7 @@ class ConfigThread(threading.Thread):
         super().__init__()
         
         self.filename = configfile
-        self.options = ["password", "lightning", "rain", "dateformat", "gps", "gpsbaud", "url", "emailaccount", "emailpassword"]
+        self.options = ["password", "lightning", "rain", "dateformat", "gps", "gpsport", "gpsbaud", "url", "emailaccount", "emailpassword"]
         self.file_hash = ""
         self.config = None
         self.update_config()
@@ -40,13 +40,16 @@ class ConfigThread(threading.Thread):
                 cdata = line.split(' ')
                 key = cdata[0].lower()
                 value = ' '.join(cdata[1:]) #allows for spaces in passwords and other values
-                if key in options:
+                if key in self.options:
                     newconfig[key] = value
                 else:
                     Logger.warning(f"[!] Invalid key {key} with value {value} provided in config file!")
         self.config = newconfig
         self.set_status(True)
         self.update_file_hash()
+        
+    def update_file_hash(self):
+        self.file_hash - self.get_hash(self.filename)
         
         
     def get_hash(self,filename):
