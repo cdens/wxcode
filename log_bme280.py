@@ -64,7 +64,7 @@ def get_mean_bme280_obs(num,dt):
             P = obs.pressure
             T = obs.temperature
             
-            Logger.debug(f"[-] Ob {T=}, {q=}, {P=}")
+            Logger.debug(f"[-] Ob T={T}, q={q}, P={P}")
         
             no += 1
             temp += T
