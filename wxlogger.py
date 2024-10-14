@@ -26,6 +26,9 @@ class WeatherLogger(threading.Thread):
         
         self.needsGPSupdate = False #doesn't need to update GPS as long as within previous fix's margin of error
         
+        cdtgstr = dt.datetime.utcnow().strftime(config["dateformat"])
+        web.send_email("Logger Initialized", "WxStation Logger Initialized, DTG " + cdtgstr, config["emailaccount"], [config["emailaccount"]], config["emailpassword"])
+        
     def change_lock(self,status):
         self.locked = bool(int(open("activelogging","r").read().strip()))
     
