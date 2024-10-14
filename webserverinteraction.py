@@ -2,10 +2,25 @@
 # WxStation web server interaction (data upload)
 import requests, datetime, logging
 
+
+import smtplib
+from email.mime.text import MIMEText
+
 Logger = logging.getLogger(__name__)
 
 
+def send_email(subject, body, sender, recipients, password):
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = sender
+    msg['To'] = ', '.join(recipients)
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
+       smtp_server.login(sender, password)
+       smtp_server.sendmail(sender, recipients, msg.as_string())
+    Logger.debug("Message sent!")
 
+
+    
 def postlightningstrike(dist,dtg,password,url): #TODO: send lightning updates to server
     myobj = {'credential': password,
             'date':dtg,
@@ -52,7 +67,7 @@ def postGPSpositionchange(lat,lon,password,url): #TODO: send GPS position update
     
     
     
-def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,password,url):
+def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarVal, password, url, emailaccount, emailpassword, curline):
     
     myobj = {'credential': password,
                 'date':cdtgstr,
@@ -67,6 +82,9 @@ def postregularupdate(cdtgstr,T,q,P,rainRate,wspd,wdir,numStrikes,solarVal,passw
     ext = "/addnewob"
     
     try:
+        
+        send_email(f"WxUpdate {cdtgstr}", curline, emailaccount, [emailaccount], emailpassword)
+        
         req = requests.post(url + ext, data = myobj, timeout = 10)
         
         if req.text == "SUCCESS":

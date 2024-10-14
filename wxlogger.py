@@ -189,7 +189,7 @@ def log(config, needsGPSupdate):
 
     #POST request for website 
     Logger.debug("[+] Sending POST with observation to server: " + url)
-    success = web.postregularupdate(curdatetimestr,T,q,P,rainRate,wspd,wdir,strikeRate,solarVal,config["password"],config["url"])
+    success = web.postregularupdate(curdatetimestr, T,q,P, rainRate, wspd,wdir, strikeRate, solarVal, config["password"], config["url"], config["emailaccount"], config["emailpassword"], curline)
 
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"

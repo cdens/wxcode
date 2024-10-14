@@ -14,7 +14,7 @@ class ConfigThread(threading.Thread):
         super().__init__()
         
         self.filename = configfile
-        self.options = ["password", "lightning", "rain", "dateformat", "gps", "gpsbaud", "url"]
+        self.options = ["password", "lightning", "rain", "dateformat", "gps", "gpsbaud", "url", "emailaccount", "emailpassword"]
         self.file_hash = ""
         self.config = None
         self.update_config()
@@ -39,7 +39,7 @@ class ConfigThread(threading.Thread):
             for line in lines:
                 cdata = line.split(' ')
                 key = cdata[0].lower()
-                value = cdata[1]
+                value = ' '.join(cdata[1:]) #allows for spaces in passwords and other values
                 if key in options:
                     newconfig[key] = value
                 else:
