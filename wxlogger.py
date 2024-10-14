@@ -170,6 +170,7 @@ def log(config, needsGPSupdate):
     if path.exists(config["rain"]):
         with open(config["rain"]) as f:
             lines = f.read().split("\n")
+            Logger.debug("File " + config["rain"] + ': ' + lines)
             lastdate = dt.datetime.strptime(lines[0].strip(),config["dateformat"])
             dtime = (curdatetime - lastdate).total_seconds() / 3600 #time in hours
             rainRate = (len(lines) - 1)/dtime #rainfall (mm) per hour

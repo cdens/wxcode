@@ -35,4 +35,6 @@ if __name__ == "__main__":
     
     #running RunTimeLapse just takes a photo and saves it as current time
     cdtstr = datetime.utcnow().strftime("%Y%m%d%H%M%S")
-    takeimage('/home/wxstation/wxstation/Pictures/image_' + cdtstr + '.jpg')
+    curfile = '/home/wxstation/wxstation/Pictures/image_' + cdtstr + '.jpg';
+    takeimage(curfile)
+    print(f"Image saved as {'/home/wxstation/wxstation/Pictures/image_' + cdtstr + '.jpg'}")
