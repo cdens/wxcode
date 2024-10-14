@@ -176,7 +176,7 @@ def log(config, needsGPSupdate):
             Logger.debug("File " + config["rain"] + ': ' + ', '.join(lines))
             lastdate = dt.datetime.strptime(lines[0].strip(),config["dateformat"])
             dtime = (curdatetime - lastdate).total_seconds() / 3600 #time in hours
-            rainRate = (len(lines) - 1)/dtime #rainfall (mm) per hour
+            rainRate = (len(lines) - 2)/dtime #rainfall (mm) per hour
         remove(config["rain"])
         with open(config["rain"],"w") as f:
             f.write(dt.datetime.strftime(curdatetime,config["dateformat"]) + "\n")
