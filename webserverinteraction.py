@@ -26,19 +26,19 @@ def postlightningstrike(dist,dtg,password,url): #TODO: send lightning updates to
             'date':dtg,
             'distance':str(round(dist,0))} #number lightning strikes in period
     ext = "/strikereport"
-    
-    try:
-        req = requests.post(url + ext, data = myobj, timeout = 10)
+    return True
+    # try:
+    #     req = requests.post(url + ext, data = myobj, timeout = 10)
         
-        if req.text == "SUCCESS":
-            return True
-        else:
-            Logger.error(f"[!] Lightning POST returned non success code: {req.text}")
+    #     if req.text == "SUCCESS":
+    #         return True
+    #     else:
+    #         Logger.error(f"[!] Lightning POST returned non success code: {req.text}")
             
-    except Exception as e:
-        Logger.warning(f"[!] Unable to connect to {url+ext}")       
+    # except Exception as e:
+    #     Logger.warning(f"[!] Unable to connect to {url+ext}")       
         
-    return False
+    # return False
 
 
 
@@ -49,19 +49,19 @@ def postGPSpositionchange(lat,lon,password,url): #TODO: send GPS position update
             'latitude':str(round(lat,2)),
             'longitude':str(round(lon,2))} #number lightning strikes in period
     ext = "/updateGPS"
-    
-    try:
-        req = requests.post(url + ext, data = myobj, timeout = 10)
+    return True
+    # try:
+    #     req = requests.post(url + ext, data = myobj, timeout = 10)
         
-        if req.text == "SUCCESS":
-            return True
-        else:
-            Logger.error(f"[!] GPS POST returned non success code: {req.text}")
+    #     if req.text == "SUCCESS":
+    #         return True
+    #     else:
+    #         Logger.error(f"[!] GPS POST returned non success code: {req.text}")
             
-    except Exception as e:
-        Logger.warning(f"[!] Unable to connect to {url+ext}")       
+    # except Exception as e:
+    #     Logger.warning(f"[!] Unable to connect to {url+ext}")       
         
-    return False
+    # return False
     
     
     
@@ -84,13 +84,13 @@ def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarV
     try:
         
         send_email(f"WxUpdate {cdtgstr}", curline, emailaccount, [emailaccount], emailpassword)
+        return True
+        # req = requests.post(url + ext, data = myobj, timeout = 10)
         
-        req = requests.post(url + ext, data = myobj, timeout = 10)
-        
-        if req.text == "SUCCESS":
-            return True
-        else:
-            Logger.error(f"[!] WxObs POST returned non success code: {req.text}")
+        # if req.text == "SUCCESS":
+        #     return True
+        # else:
+        #     Logger.error(f"[!] WxObs POST returned non success code: {req.text}")
             
     except Exception as e:
         Logger.warning(f"[!] Unable to connect to {url+ext}")       

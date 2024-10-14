@@ -115,7 +115,7 @@ def log(config, needsGPSupdate):
     #uploading/storing GPS position if necessary
     if needsGPSupdate:
         Logger.debug("[+] Posting updated position to webserver")
-        success = web.postGPSpositionchange(lat,lon,config["password"],url)
+        success = web.postGPSpositionchange(lat,lon,config["password"],config["url"])
         if success:
             Logger.debug("[+] Position upload successful, logging to file")
             needsGPSupdate = False #update complete
