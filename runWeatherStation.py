@@ -18,8 +18,9 @@ def main(url, needsGPSupdate):
     #no point in encasing this in a try statement as the program can't run without it
     Logger.info("[+] Starting configuration thread")
     ConfigThread = configupdate.ConfigThread(".config")
-    ConfigThread.run()
+    ConfigThread.update_config() #get initial configuration settings
     config = ConfigThread.config
+    ConfigThread.start() #monitor for changes to settings in the background
     
     Logger.info("[+] Starting rain logging thread")
     try:

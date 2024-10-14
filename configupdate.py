@@ -37,12 +37,13 @@ class ConfigThread(threading.Thread):
         with open(self.filename) as c:
             lines = c.read().split("\n")
             for line in lines:
-                cdata = line.split(' ')
-                key = cdata[0].lower()
-                value = ' '.join(cdata[1:]) #allows for spaces in passwords and other values
-                if key in self.options:
-                    newconfig[key] = value
-                else:
+                if len(line) > 2:
+                    cdata = line.split(' ')
+                    key = cdata[0].lower()
+                    value = ' '.join(cdata[1:]) #allows for spaces in passwords and other values
+                    if key in self.options:
+                        newconfig[key] = value
+                    else:
                     Logger.warning(f"[!] Invalid key {key} with value {value} provided in config file!")
         self.config = newconfig
         self.set_status(True)
