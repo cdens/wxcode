@@ -36,7 +36,8 @@ def postlightningstrike(dist,dtg,password,url): #TODO: send lightning updates to
     #         Logger.error(f"[!] Lightning POST returned non success code: {req.text}")
             
     # except Exception as e:
-    #     Logger.warning(f"[!] Unable to connect to {url+ext}")       
+    #     Logger.warning(f"[!] Unable to connect to {url+ext}")
+    #     Logger.debug("Traceback: " + repr(e))   
         
     # return False
 
@@ -59,7 +60,8 @@ def postGPSpositionchange(lat,lon,password,url): #TODO: send GPS position update
     #         Logger.error(f"[!] GPS POST returned non success code: {req.text}")
             
     # except Exception as e:
-    #     Logger.warning(f"[!] Unable to connect to {url+ext}")       
+    #     Logger.warning(f"[!] Unable to connect to {url+ext}")
+    #     Logger.debug("Traceback: " + repr(e))      
         
     # return False
     
@@ -93,8 +95,8 @@ def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarV
         #     Logger.error(f"[!] WxObs POST returned non success code: {req.text}")
             
     except Exception as e:
-        Logger.warning(f"[!] Unable to connect to {url+ext}")       
-        
+        Logger.warning(f"[!] Unable to transmit data to URL {url+ext} or email {emailaccount}")       
+        Logger.debug("Traceback: " + repr(e))  
             
     return False
     

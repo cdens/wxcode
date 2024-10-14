@@ -77,7 +77,7 @@ def get_mean_bme280_obs(num,dt):
     rh = rh/no
     pres = pres/no
     
-    Logger.debug("[+] Finished BME280 observation cycle ({no} obs)")
+    Logger.debug(f"[+] Finished BME280 observation cycle ({no} obs)")
 
     return temp, rh, pres
     
