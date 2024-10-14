@@ -44,7 +44,7 @@ class ConfigThread(threading.Thread):
                     if key in self.options:
                         newconfig[key] = value
                     else:
-                    Logger.warning(f"[!] Invalid key {key} with value {value} provided in config file!")
+                        Logger.warning(f"[!] Invalid key {key} with value {value} provided in config file!")
         self.config = newconfig
         self.set_status(True)
         self.update_file_hash()
