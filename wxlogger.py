@@ -160,7 +160,7 @@ def log(config, needsGPSupdate):
             lines = f.read().split("\n")
             lastdate = dt.datetime.strptime(lines[0].strip(),config["dateformat"])
             dtime = (dt.datetime.utcnow() - lastdate).total_seconds() * 3600 #time in hours
-            strikeRate = (len(lines) - 1)/dtime #lightning strikes per hour
+            strikeRate = (len(lines) - 2)/dtime #lightning strikes per hour
         remove(config["lightning"]) #delete file
         with open(config["lightning"],"w") as f:
             f.write(dt.datetime.strftime(curdatetime,config["dateformat"]) + "\n")
