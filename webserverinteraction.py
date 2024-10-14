@@ -69,7 +69,7 @@ def postGPSpositionchange(lat,lon,password,url): #TODO: send GPS position update
     
     
     
-def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarVal, password, url, emailaccount, emailpassword, curline):
+def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarVal, password, url, emailaccount, emailpassword):
     
     myobj = {'credential': password,
                 'date':cdtgstr,
@@ -84,8 +84,11 @@ def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarV
     ext = "/addnewob"
     
     try:
-        
-        send_email(f"WxUpdate {cdtgstr}", curline, emailaccount, [emailaccount], emailpassword)
+        Tf = 9*T/5 + 32
+        rainRatemm = rainRate * 10
+        emailbody = f"{curdatetimestr} Observation:\nTemperature- {Tf:5.1f} degF\nHumidity- {q:5.1f}%\nPressure- {P:7.1f} mb\nWind- {wspd:4.1f} mph brg {wdir:03.0f}T\nLightning Strikes- {strikeRate:4.1f}\nRainfall- {rainRatemmhr:4.1f} mm" 
+        logging.debug(f"Sending email to account {emailaccount}, password {emailpassword}, text:\n{emailbody}")
+        send_email(f"WxUpdate {cdtgstr}", emailbody, emailaccount, [emailaccount], emailpassword)
         return True
         # req = requests.post(url + ext, data = myobj, timeout = 10)
         
