@@ -188,7 +188,7 @@ def log(config, needsGPSupdate):
     Logger.info(f"[!] Weather Observation: {curline}")
 
     #POST request for website 
-    Logger.debug("[+] Sending POST with observation to server: " + url)
+    Logger.debug("[+] Sending POST with observation to server: " + config["url"])
     success = web.postregularupdate(curdatetimestr, T,q,P, rainRate, wspd,wdir, strikeRate, solarVal, config["password"], config["url"], config["emailaccount"], config["emailpassword"], curline)
 
     #appending data to file
