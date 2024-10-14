@@ -78,15 +78,14 @@ def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarV
                 'pres':str(round(P,1)), #pressure (mbar or hPa)
                 'wspd':str(round(wspd,1)), #wind speed (m/s)
                 'wdir':str(wspd), #wind direction (rel to N)
-                'precip':str(round(rainRate,1)), #precipitation since last ob (cm)
+                'precip':str(round(rainRate,1)), #precipitation rate (mm/hr)
                 'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
-                'strikes':str(numStrikes)} #number lightning strikes in period
+                'strikes':str(numStrikes)} #number lightning strikes per hour
     ext = "/addnewob"
     
     try:
         Tf = 9*T/5 + 32
-        rainRatemm = rainRate * 10
-        emailbody = f"{cdtgstr} Observation:\nTemperature- {Tf:5.1f} degF\nHumidity- {q:5.1f}%\nPressure- {P:7.1f} mb\nWind- {wspd:4.1f} mph brg {wdir:03.0f}T\nLightning Strikes- {strikeRate:4.1f}\nRainfall- {rainRatemmhr:4.1f} mm" 
+        emailbody = f"{cdtgstr} Observation:\nTemperature- {Tf:5.1f} degF\nHumidity- {q:5.1f}%\nPressure- {P:7.1f} mb\nWind- {wspd:4.1f} mph brg {wdir:03.0f}T\nLightning- {numStrikes:4.1f} strikes/hr\nRainfall- {rainRate:4.1f} mm/hr" 
         logging.debug(f"Sending email to account {emailaccount}, password {emailpassword}, text:\n{emailbody}")
         send_email(f"WxUpdate {cdtgstr}", emailbody, emailaccount, [emailaccount], emailpassword)
         return True
