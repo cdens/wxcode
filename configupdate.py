@@ -70,6 +70,3 @@ class ConfigThread(threading.Thread):
     
     
     
-if __name__ == "__main__":
-    runRainLogger()
-    

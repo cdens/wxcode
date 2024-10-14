@@ -121,13 +121,14 @@ if __name__ == "__main__":
     dtgstr = datetime.strftime(datetime.utcnow(),"%Y%m%d%H%M")
     logfile = f"wxinfo_{dtgstr}.log"
     
-    print(f"Starting PiWxStation- appending log information to {logfile}")
     
     #creating logger
     Logger = logging.getLogger(__name__)
     if debugging:
-        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
+        print("Starting PiWxStation in DEBUG mode, directing all logs to STDOUT")
+        logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', stream=sys.stdout)
     else:
+        print(f"Starting PiWxStation- appending log information to {logfile}")
         logging.basicConfig(level=currentLevel, format='%(asctime)s - %(levelname)s - %(message)s', filename=logfile)
     
     main(url, needsGPSupdate)
