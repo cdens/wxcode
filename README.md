@@ -1,6 +1,8 @@
 This code controls the PiWxStation, a Raspberry Pi-based weather station including a combination of custom-built and commercial sensors, all controlled with Python. The weather station is configured to sample conditions every 15 minutes, and data are stored locally in daily CSV files and uploaded (internet connectivity permitting) to a remote server (associated repository [here](www.github.com/cdens/wxserver) with an incorporated database. The following items are currently measured by the PiWx Station: temperature (<span>&#176;</span>F), relative humidity (%), pressure (mb), wind speed (mph), wind direction (<span>&#176;</span>T), rainfall rate (mm/hr), and lightning strike rate (per hour).
 
-![image](overview.jpeg) 
+A running instance of the web server with data from this weather station is available at https://densmorewx.pythonanywhere.com
+
+![image](overview.jpg) 
     
 Temperature (<span>&#176;</span>F), relative humidity (%), and pressure (mb) are measured with a [BME 280](https://www.amazon.com/gp/product/B07P4CWGGK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)">BME 280</a> environmental sensor via I2C protocol. The sensor is located on the underside of the station where it is sheltered from sun and rain to provide the most accurate readings.
     
