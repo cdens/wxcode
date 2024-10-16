@@ -77,7 +77,7 @@ def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarV
                 'rh':str(round(q,1)), #relative humidity (%)
                 'pres':str(round(P,1)), #pressure (mbar or hPa)
                 'wspd':str(round(wspd,1)), #wind speed (m/s)
-                'wdir':str(wspd), #wind direction (rel to N)
+                'wdir':str(wdir), #wind direction (rel to N)
                 'precip':str(round(rainRate,1)), #precipitation rate (mm/hr)
                 'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
                 'strikes':str(numStrikes)} #number lightning strikes per hour
