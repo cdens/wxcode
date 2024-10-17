@@ -70,7 +70,7 @@ class WeatherLogger(threading.Thread):
                     cdt = dt.datetime.utcnow()
                     
                     #getting new wind speed observation
-                    if (cdt - self.lastwspdlog).total_seconds() >= self.intervalsec:
+                    if (cdt - self.lastwspdlog).total_seconds() >= self.wspdintervalsec:
                         #getting wind speed
                         logging.debug("[+] Getting wind speed")
                         try:
