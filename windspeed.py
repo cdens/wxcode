@@ -64,7 +64,7 @@ class WindSpeedLogger:
         
         wspd = self.conversion * rotations_per_second
         
-        Logger.debug(f"Measured wind speed: {counts} counts, {rotations} rotations, {wspd} mph uncalibrated")
+        Logger.debug(f"Measured wind speed: {counts} counts, {rotations_per_second} rotations, {wspd} mph")
         
         #calibration factor for wind energy loss
         #wspd = wspd*1.2
