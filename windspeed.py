@@ -8,7 +8,18 @@ Logger = logging.getLogger(__name__)
 class WindSpeedLogger:
 
     def __init__(self):
-        self.counts = 0
+        self.init_settings()
+        
+    #this doesn't have to be an entire function but I made it one so the wind speed conversion math is clear
+    def init_settings(self):
+        self.cup_radius = (2.5/12) #radius from center of anemometer to cup in feet
+        self.speed_conversion = 0.681818 #conversion from feet per second to miles per hour (since dt is in seconds and cup_radius is in feet, and our desired output is mph because we use freedom units here)
+        
+        self.cup_speed_cal_coeff = 3 #relationship between cup speed and wind speed
+        
+        #speed = calibration coeff * angular velocity in radians per sec * radius
+        # = rps * calibration * 2 * pi * radius
+        self.conversion = 2 * 3.1415 * self.cup_radius * self.speed_conversion * self.cup_speed_cal_coeff
 
     def countSensorTriggers(self,pin,duration):
 
@@ -38,19 +49,20 @@ class WindSpeedLogger:
         return self.counts
 
 
-    def pollanemometer(self):
+    def pollanemometer(self, dt=10):
+        #dt sets amount of time to poll anemometer in seconds
 
         #get number of anemometer rotations in 30 seconds (GPIO17/pin11)
-        dt = 10 
-        counts = self.countSensorTriggers(17,dt) #divide by 2 since polls twice per rotation
-        rotations = counts/2
+        counts = self.countSensorTriggers(17,dt) 
+        rotations_per_second = counts/(2 * dt) #divide by 2 since polls twice per rotation
         
-        #convert counts to wind speed (mph)
-        # speed (in/sec) = 2*pi*r/t (r=10 in, t = dt -> default 30sec)
-        # 1 in/sec = 0.056818 mph
-        # conversion = 2*pi* 2.5 inches * 0.056818 = 0.8925
-        wspd = rotations*0.8925/dt
+        # #convert counts to wind speed (mph)
+        # # speed (in/sec) = 2*pi*r/t (r=10 in, t = dt -> default 30sec)
+        # # 1 in/sec = 0.056818 mph
+        # # conversion = 2*pi* 2.5 inches * 0.056818 = 0.8925
+        # wspd = rotations*0.8925/dt
         
+        wspd = self.conversion * rotations_per_second
         
         Logger.debug(f"Measured wind speed: {counts} counts, {rotations} rotations, {wspd} mph uncalibrated")
         
@@ -59,11 +71,11 @@ class WindSpeedLogger:
 
         return wspd
 
-def pollanemometer():
+def pollanemometer(dt=10):
     spdcheck = WindSpeedLogger()
-    return spdcheck.pollanemometer() #returns wind speed
+    return spdcheck.pollanemometer(dt=dt) #returns wind speed
 
 if  __name__ == "__main__":
     Logger.debug(f"[+] Starting wind speed measurement for 10 seconds")
-    wspd = pollanemometer()
+    wspd = pollanemometer(dt=10)
 

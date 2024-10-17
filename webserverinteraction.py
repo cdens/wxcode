@@ -69,14 +69,15 @@ def postGPSpositionchange(lat,lon,password,url): #TODO: send GPS position update
     
     
     
-def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarVal, password, url, emailaccount, emailpassword):
+def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wgust, wdir, numStrikes, solarVal, password, url, emailaccount, emailpassword):
     
     myobj = {'credential': password,
                 'date':cdtgstr,
                 'ta':str(round(T,1)), #temperature (C)
                 'rh':str(round(q,1)), #relative humidity (%)
                 'pres':str(round(P,1)), #pressure (mbar or hPa)
-                'wspd':str(round(wspd,1)), #wind speed (m/s)
+                'wspd':str(round(wspd,1)), #wind speed (mph)
+                'wgust':str(round(wgust,1)), #wind gust (mph)
                 'wdir':str(wdir), #wind direction (rel to N)
                 'precip':str(round(rainRate,1)), #precipitation rate (mm/hr)
                 'solar':str(solarVal), #downwelling shortwave radiation at surface (J/m^2)
@@ -85,7 +86,7 @@ def postregularupdate(cdtgstr, T, q, P, rainRate, wspd, wdir, numStrikes, solarV
     
     try:
         Tf = 9*T/5 + 32
-        emailbody = f"{cdtgstr} Observation:\nTemperature- {Tf:5.1f} degF\nHumidity- {q:5.1f}%\nPressure- {P:7.1f} mb\nWind- {wspd:4.1f} mph brg {wdir:03.0f}T\nLightning- {numStrikes:4.1f} strikes/hr\nRainfall- {rainRate:4.1f} mm/hr" 
+        emailbody = f"{cdtgstr} Observation:\nTemperature- {Tf:5.1f} degF\nHumidity- {q:5.1f}%\nPressure- {P:7.1f} mb\nWind- {wspd:4.1f} gust {wgust:4.1f} mph brg {wdir:03.0f}T\nLightning- {numStrikes:4.1f} strikes/hr\nRainfall- {rainRate:4.1f} mm/hr" 
         logging.debug(f"Sending email to account {emailaccount}, password {emailpassword}, text:\n{emailbody}")
         send_email(f"WxUpdate {cdtgstr}", emailbody, emailaccount, [emailaccount], emailpassword)
 

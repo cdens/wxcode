@@ -7,6 +7,7 @@ import geopy.distance
 import log_bme280, windspeed, winddir, GPSinteract
 import webserverinteraction as web
 from time import sleep
+import numpy as np
 
 Logger = logging.getLogger(__name__)
 
@@ -23,6 +24,12 @@ class WeatherLogger(threading.Thread):
         self.intervalmin = 15 #minutes
         self.intervalsec = self.intervalmin*60 #to seconds
         self.locked = False
+        
+        #wind speed logger
+        self.wspdintervalmin = 1
+        self.wspdintervalsec = self.wspdintervalmin * 60
+        self.lastwspdlog = dt.datetime(1,1,1)
+        self.wspdlist = []
         
         self.needsGPSupdate = False #doesn't need to update GPS as long as within previous fix's margin of error
         
@@ -44,7 +51,7 @@ class WeatherLogger(threading.Thread):
     def run_logger(self):
         if not self.isLogging:
             self.isLogging = True
-            self.needsGPSupdate = log(self.config, self.needsGPSupdate)
+            self.needsGPSupdate = log(self.config, self.needsGPSupdate, self.wspdlist)
             self.isLogging = False
             
         
@@ -61,12 +68,25 @@ class WeatherLogger(threading.Thread):
                         lastob = dt.datetime(1,1,1) #definitely more than 15 minutes ago
                         
                     cdt = dt.datetime.utcnow()
+                    
+                    #getting new wind speed observation
+                    if (cdt - self.lastwspdlog).total_seconds() >= self.intervalsec:
+                        #getting wind speed
+                        logging.debug("[+] Getting wind speed")
+                        try:
+                            self.wspdlist.append(windspeed.pollanemometer(dt=5))
+                            self.lastwspdlog = cdt
+                        except Exception as e:
+                            Logger.exception(e)
+                    
                     if (cdt - lastob).total_seconds() >= self.intervalsec:
                         
                         Logger.info(f"[+] Starting wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
                         self.run_logger()
                         Logger.debug(f"[+] Finished wxlogger for observation time {dt.datetime.strftime(cdt,'%Y%m%d %H:%M')} UTC")
-                                
+                        
+                        #resetting wind speed logging
+                        self.wspdlist = []                        
                         with open("lastob","w") as f:
                             f.write(dt.datetime.strftime(cdt,'%Y%m%d %H:%M'))
                             
@@ -81,7 +101,7 @@ class WeatherLogger(threading.Thread):
 
 
 
-def log(config, needsGPSupdate):
+def log(config, needsGPSupdate, wspdlist):
     
     Logger.debug("[+] Getting weather observation")
 
@@ -137,12 +157,20 @@ def log(config, needsGPSupdate):
         P = 0
     
     #getting wind speed
-    logging.debug("[+] Getting wind speed")
+    logging.debug("[+] Calculating mean and max wind speed for current interval")
     try:
-        wspd = windspeed.pollanemometer()
+        if len(wspdlist) > 0:
+            logging.warning("[!] No wind speed measurements for the current observation period ")
+            wspdarray = np.asarray(wspdlist)
+            wspd = np.nanmean(wspdarray)
+            wgust = np.nanmax(wspdarray)
+        else:
+            wspd = 0
+            wgust = 0
     except Exception as e:
         Logger.exception(e)
         wspd = 0
+        wgust = 0
 
     #getting wind direction 
     Logger.debug("[+] Getting wind direction")
@@ -188,12 +216,12 @@ def log(config, needsGPSupdate):
 
     
     #line to send to file
-    curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f}" #ob line to be transmitted
+    curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wgust:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f}" #ob line to be transmitted
     Logger.info(f"[!] Weather Observation: {curline}")
 
     #POST request for website 
     Logger.debug("[+] Sending POST with observation to server: " + config["url"])
-    success = web.postregularupdate(curdatetimestr, T,q,P, rainRate, wspd,wdir, strikeRate, solarVal, config["password"], config["url"], config["emailaccount"], config["emailpassword"])
+    success = web.postregularupdate(curdatetimestr, T,q,P, rainRate, wspd, wgust, wdir, strikeRate, solarVal, config["password"], config["url"], config["emailaccount"], config["emailpassword"])
 
     #appending data to file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
