@@ -3,8 +3,10 @@ This code controls the PiWxStation, a Raspberry Pi-based weather station includi
 A running instance of the web server with data from this weather station is available at https://densmorewx.pythonanywhere.com
 
 ![image](overview.jpg) 
-    
-Temperature (<span>&#176;</span>F), relative humidity (%), and pressure (mb) are measured with a [BME 280](https://www.amazon.com/gp/product/B07P4CWGGK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)">BME 280</a> environmental sensor via I2C protocol. The sensor is located on the underside of the station where it is sheltered from sun and rain to provide the most accurate readings.
+
+The 3D print files for this design are also available [here](https://github.com/cdens/WxHardware).
+  
+Temperature (<span>&#176;</span>F), relative humidity (%), and pressure (mb) are measured with a [BME 280](https://www.amazon.com/gp/product/B07P4CWGGK/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1)">BME 280</a> environmental sensor via I2C protocol. The sensor is located on the underside of an arm of the station where it is sheltered from sun and rain to provide the most accurate readings.
     
 Wind speed is measured with a custom-built three-cupped anemometer. As winds spin the anemometer, magnets connected to the shaft pass a [Hall Effect sensor](https://www.amazon.com/gp/product/B07SGBW87J/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1), which increases the voltage on a line connected to a Raspberry Pi GPIO pin each time the magnet passes. The Pi counts the number of voltage changes on the line over a 30-second duration to calculate rotations per minute and from this value determines the wind speed.
     
@@ -12,7 +14,7 @@ Wind direction is measured with a custom built wind vane. A magnet attached to t
     
 Rainfall is measured with a custom built tipping bucket style rain gauge. This gauge funnels rain into a small two-chambered bucket balanced on a fulcrum. Each time a bucket fills (the gauge was designed for this to correspond to 1 mm of rainfall), the bucket tips and empties its water and the other bucket begins to fill. An attached magnet and an additional Hall Effect sensor enable the weather station to record each 1 mm of total rainfall and calculate rainfall rates.
     
-Lightning is observed with a [Sparkfun AS3935 Lightning Detector](https://www.amazon.com/gp/product/B07WFKWGC8/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1). This sensor includes a small antenna which measures electromagnetic pulses (EMPs) produced by lightning strikes in the 500 kHz band and estimates distance from the lightning strike. The sensor is connected to the weather station via a 14" rod, which provides sufficient standoff distance from the Raspberry Pi and other sensors to prevent the detector from picking up false positives.
+Lightning is observed with a [Sparkfun AS3935 Lightning Detector](https://www.amazon.com/gp/product/B07WFKWGC8/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1). This sensor includes a small antenna which measures electromagnetic pulses (EMPs) produced by lightning strikes in the 500 kHz band and estimates distance from the lightning strike. The sensor sits in a basket beneath one of the arms (ideally the wind vane arm to combine the SPI-connected sensors in one direction) which provides sufficient standoff distance from the Raspberry Pi and other sensors to prevent the detector from picking up false positives.
     
-A tower in the center of the weather station provides a waterproof housing for the [5MP/1080p Raspberry Pi photo/video camera](https://www.amazon.com/gp/product/B07JPLV5K1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1). The camera can be commanded remotely to capture videos, take individual photographs, or take time lapse videos with a customizable interval and duration (code included in this repository). The housing can be rotated 360<span>&#176;</span>, enabling the camera to document sunrises, sunsets, or storms and other weather phenomena in any direction. 
+Three portholes in the base also provide mount points for the [5MP/1080p Raspberry Pi photo/video camera](https://www.amazon.com/gp/product/B07JPLV5K1/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1). The camera can be commanded remotely to capture videos, take individual photographs, or take time lapse videos with a customizable interval and duration (code included in this repository). Three holes are included in the base, with covers for those not in use, enabling the camera to document sunrises, sunsets, or storms and other weather phenomena in any direction. 
    
