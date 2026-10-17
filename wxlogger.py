@@ -149,7 +149,7 @@ def log(config, needsGPSupdate, wspdlist):
     #getting temperature/humidity/pressure
     Logger.debug("[+] Getting temperature/humidity/pressure")
     try:
-        T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+        T,q,P = log_bmp280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
     except Exception as e:
         Logger.exception(e)
         T = 0

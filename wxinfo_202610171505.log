@@ -1,0 +1,15 @@
+2026-10-17 16:05:35,496 - INFO - [+] Beginning PiWxStation Logger
+2026-10-17 16:05:35,497 - INFO - [+] Starting configuration thread
+2026-10-17 16:05:35,497 - INFO - [+] Starting rain logging thread
+2026-10-17 16:05:35,498 - DEBUG - [+] Rain logger initialized- configuring logger
+2026-10-17 16:05:35,499 - DEBUG - [+] Rain logging thread initiated
+2026-10-17 16:05:35,499 - DEBUG - [+] Starting lightning logging thread
+2026-10-17 16:05:35,499 - INFO - [+] Lightning logging thread initiated
+2026-10-17 16:05:35,500 - DEBUG - [+] Starting WxStation logger loop
+2026-10-17 16:05:36,742 - DEBUG - Message sent!
+2026-10-17 16:05:36,744 - DEBUG - [+] Rain logger configured, waiting for bucket tips
+2026-10-17 16:05:36,745 - DEBUG - [+] Initializing wind direction
+2026-10-17 16:05:36,764 - DEBUG - [+] Getting wind speed
+2026-10-17 16:05:36,826 - DEBUG - WDir Voltages: CH:0=0.72V, CH:1=3.30V, CH:2=0.12V, CH:3=3.30V, CH:4=0.01V, CH:5=3.30V, CH:6=0.23V, CH:7=3.30V, 
+2026-10-17 16:05:36,841 - INFO - [+] Lightning detector connected
+2026-10-17 16:05:41,827 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
