@@ -4,7 +4,7 @@ from os import path, remove
 import datetime as dt
 import threading, logging, traceback
 import geopy.distance
-import log_bme280, windspeed, winddir, GPSinteract
+import log_bmp280, windspeed, winddir, GPSinteract
 import webserverinteraction as web
 from time import sleep
 import numpy as np
@@ -205,6 +205,7 @@ def log(config, needsGPSupdate, wspdlist):
             lastdate = dt.datetime.strptime(lines[0].strip(),config["dateformat"])
             dtime = (curdatetime - lastdate).total_seconds() / 3600 #time in hours
             rainRate = (len(lines) - 2)/dtime #rainfall (mm) per hour
+            rainRate *= 1.077 #conversion based on 1 bucket tip per 0.928 mm (183 tips per L, 5883 mm^2 sfc area)
         remove(config["rain"])
         with open(config["rain"],"w") as f:
             f.write(dt.datetime.strftime(curdatetime,config["dateformat"]) + "\n")

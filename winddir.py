@@ -33,66 +33,18 @@ def get_channel_values():
     
 
         
-        
-#get wind direction when multiple switches are triggered simultaneously
-def getdirfrommultigoodvals(isvalid, dirs):
     
-    ii = 0
-    seqs = []
-    seqs[0] = [isvalid[0]]
-    
-    #parsing indices into lists of consecutive values (e.g. [1,2,5,6,7] => [[1,2],[5,6,7]])
-    for i in isvalid[1:]:
-        if i == seqs[ii][-1] + 1:
-            seqs[ii].append(i)
-        else:
-            ii += 1
-            seqs.append([i])
-            
-    #finding longest consecutive sequence
-    seqlens = []
-    for clist in seqs:
-        seqlens.append(len(clist))
-    mainseq = seqs[np.argmax(seqlens)]
-    
-    
-    ld = len(dirs)
-    if not (ld-1 in isvalid and 0 in isvalid): #if channels with high voltages don't cross over 360->0
-        winddir = np.mean(dirs[mainseq])
-        
-    else:
-        
-        #pull lists with start and end indices
-        maxlen = np.max(seqlens)
-        for s in seqs:
-            if ld-1 in s:
-                sE = s
-            elif 0 in s:
-                sS = s
-        
-        if len(sE) + len(sS) > maxlen: #use new sequences 
-            sS += 360
-            winddir = np.mean(dirs[sS + sE])
-            if winddir >= 360:
-               winddir -= 360 
-        
-        else:
-            winddir = np.mean(dirs[mainseq])
-            
-        
-    return winddir
-        
-    
-    
-        
-
-# gets wind direction using threshold where 
-def get_winddir_from_voltages(channels, threshold):
+def get_winddir_from_voltages(channels):
     
     winddir = -1
-    dirs = np.array([0, 45, 90, 135, 180, 225, 270, 315])
-    
-    winddir = dirs[np.argmax(channels)]
+    dirs = np.array([0., 45., 90., 135., 180., 225., 270., 315.])
+    dirs *= np.pi/180 #convert to radians
+
+    winddir = np.arctan2(np.sin(np.nansum(dirs * channels)), np.cos(np.nansum(dirs * channels)))
+    winddir *= 180/np.pi #convert to degrees
+
+    if winddir <= 0:
+        winddir +=360
     
     return winddir
     
@@ -108,8 +60,11 @@ def getwinddirection():
     chvoltages = np.asarray(chvoltages)
     
     Logger.debug(chvoltstr)
+    print(chvoltstr)
+        
+        
     
-    winddir = get_winddir_from_voltages(chvoltages, 0.8)
+    winddir = get_winddir_from_voltages(chvoltages)
     
     if winddir == -1:
         winddir = 0
@@ -119,6 +74,9 @@ def getwinddirection():
     
 if __name__ == "__main__":
     channels = get_channel_values()
-    print_voltages(channels)
+    #print_voltages(channels)
+    #print(channels)
+    winddir = getwinddirection()
+    print(winddir)
     
     

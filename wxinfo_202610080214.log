@@ -1,0 +1,427 @@
+2026-10-08 03:14:30,753 - INFO - [+] Beginning PiWxStation Logger
+2026-10-08 03:14:30,753 - INFO - [+] Starting configuration thread
+2026-10-08 03:14:30,758 - INFO - [+] Starting rain logging thread
+2026-10-08 03:14:30,761 - DEBUG - [+] Rain logger initialized- configuring logger
+2026-10-08 03:14:30,761 - DEBUG - [+] Rain logging thread initiated
+2026-10-08 03:14:30,761 - DEBUG - [+] Starting lightning logging thread
+2026-10-08 03:14:30,762 - INFO - [+] Lightning logging thread initiated
+2026-10-08 03:14:30,762 - DEBUG - [+] Starting WxStation logger loop
+2026-10-08 03:14:32,075 - DEBUG - Message sent!
+2026-10-08 03:14:32,078 - DEBUG - [+] Rain logger configured, waiting for bucket tips
+2026-10-08 03:14:32,079 - DEBUG - [+] Initializing wind direction
+2026-10-08 03:14:32,112 - DEBUG - [+] Getting wind speed
+2026-10-08 03:14:32,206 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-08 03:14:32,213 - DEBUG - [-] Detector connect attempt 1 of 20 failed
+2026-10-08 03:14:33,240 - DEBUG - [-] Detector connect attempt 2 of 20 failed
+2026-10-08 03:14:34,262 - DEBUG - [-] Detector connect attempt 3 of 20 failed
+2026-10-08 03:14:35,275 - DEBUG - [-] Detector connect attempt 4 of 20 failed
+2026-10-08 03:14:36,294 - DEBUG - [-] Detector connect attempt 5 of 20 failed
+2026-10-08 03:14:37,228 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:14:37,229 - INFO - [+] Starting wxlogger for observation time 20261008 02:14 UTC
+2026-10-08 03:14:37,229 - DEBUG - [+] Getting weather observation
+2026-10-08 03:14:37,230 - DEBUG - [+] Checking GPS position
+2026-10-08 03:14:37,231 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-08 03:14:37,257 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-08 03:14:37,257 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-08 03:14:37,257 - DEBUG - [+] Starting BME280 obs
+2026-10-08 03:14:37,259 - ERROR - [Errno 121] Remote I/O error
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+  File "/home/wxstation/wxstation/wxcode/log_bme280.py", line 59, in get_mean_bme280_obs
+    bme280.load_calibration_params(bus,address)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/__init__.py", line 153, in load_calibration_params
+    compensation_params.dig_T1 = read.unsigned_short(0x88)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/reader.py", line 40, in unsigned_short
+    return self._bus.read_word_data(self._address, register) & 0xffff
+  File "/usr/local/lib/python3.7/dist-packages/smbus2/smbus2.py", line 453, in read_word_data
+    ioctl(self.fd, I2C_SMBUS, msg)
+OSError: [Errno 121] Remote I/O error
+2026-10-08 03:14:37,269 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-08 03:14:37,269 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-08 03:14:37,276 - DEBUG - [+] Getting wind direction
+2026-10-08 03:14:37,304 - DEBUG - [-] Detector connect attempt 6 of 20 failed
+2026-10-08 03:14:37,307 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-08 03:14:37,308 - DEBUG - [+] Reading lightning strike data
+2026-10-08 03:14:37,312 - DEBUG - [+] Reading rainfall rate data
+2026-10-08 03:14:37,313 - DEBUG - File rainlog.txt: 20261008021430, 
+2026-10-08 03:14:37,313 - INFO - [!] Weather Observation: 20261008021437,   0.0,   0.0,     0.0,  0.0,  0.0, 000,  0.0,  0.0,  0.0
+2026-10-08 03:14:37,314 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-08 03:14:37,314 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261008021437 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 000T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-08 03:14:38,318 - DEBUG - [-] Detector connect attempt 7 of 20 failed
+2026-10-08 03:14:38,446 - DEBUG - Message sent!
+2026-10-08 03:14:38,466 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-08 03:14:39,325 - DEBUG - [-] Detector connect attempt 8 of 20 failed
+2026-10-08 03:14:40,344 - DEBUG - [-] Detector connect attempt 9 of 20 failed
+2026-10-08 03:14:41,365 - DEBUG - [-] Detector connect attempt 10 of 20 failed
+2026-10-08 03:14:42,382 - DEBUG - [-] Detector connect attempt 11 of 20 failed
+2026-10-08 03:14:43,397 - DEBUG - [-] Detector connect attempt 12 of 20 failed
+2026-10-08 03:14:44,413 - DEBUG - [-] Detector connect attempt 13 of 20 failed
+2026-10-08 03:14:45,428 - DEBUG - [-] Detector connect attempt 14 of 20 failed
+2026-10-08 03:14:46,449 - DEBUG - [-] Detector connect attempt 15 of 20 failed
+2026-10-08 03:14:47,462 - DEBUG - [-] Detector connect attempt 16 of 20 failed
+2026-10-08 03:14:47,880 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-08 03:14:47,893 - DEBUG - [+] Finished wxlogger for observation time 20261008 02:14 UTC
+2026-10-08 03:14:48,476 - DEBUG - [-] Detector connect attempt 17 of 20 failed
+2026-10-08 03:14:49,489 - DEBUG - [-] Detector connect attempt 18 of 20 failed
+2026-10-08 03:14:50,503 - DEBUG - [-] Detector connect attempt 19 of 20 failed
+2026-10-08 03:14:51,520 - DEBUG - [-] Detector connect attempt 20 of 20 failed
+2026-10-08 03:14:52,522 - WARNING - [-] All detector connect attempts failed- terminating
+2026-10-08 03:15:47,956 - DEBUG - [+] Getting wind speed
+2026-10-08 03:15:53,098 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:16:53,157 - DEBUG - [+] Getting wind speed
+2026-10-08 03:16:58,218 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:17:58,278 - DEBUG - [+] Getting wind speed
+2026-10-08 03:18:03,340 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:19:03,397 - DEBUG - [+] Getting wind speed
+2026-10-08 03:19:08,459 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:20:08,525 - DEBUG - [+] Getting wind speed
+2026-10-08 03:20:13,586 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:21:13,653 - DEBUG - [+] Getting wind speed
+2026-10-08 03:21:18,715 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:22:18,757 - DEBUG - [+] Getting wind speed
+2026-10-08 03:22:23,819 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:23:23,885 - DEBUG - [+] Getting wind speed
+2026-10-08 03:23:28,947 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:24:29,013 - DEBUG - [+] Getting wind speed
+2026-10-08 03:24:34,076 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:25:34,138 - DEBUG - [+] Getting wind speed
+2026-10-08 03:25:39,200 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:26:39,267 - DEBUG - [+] Getting wind speed
+2026-10-08 03:26:44,329 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:27:44,391 - DEBUG - [+] Getting wind speed
+2026-10-08 03:27:49,453 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:28:49,519 - DEBUG - [+] Getting wind speed
+2026-10-08 03:28:54,581 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:29:24,617 - INFO - [+] Starting wxlogger for observation time 20261008 02:29 UTC
+2026-10-08 03:29:24,617 - DEBUG - [+] Getting weather observation
+2026-10-08 03:29:24,617 - DEBUG - [+] Checking GPS position
+2026-10-08 03:29:24,618 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-08 03:29:24,619 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-08 03:29:24,619 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-08 03:29:24,620 - DEBUG - [+] Starting BME280 obs
+2026-10-08 03:29:24,620 - ERROR - [Errno 121] Remote I/O error
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+  File "/home/wxstation/wxstation/wxcode/log_bme280.py", line 59, in get_mean_bme280_obs
+    bme280.load_calibration_params(bus,address)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/__init__.py", line 153, in load_calibration_params
+    compensation_params.dig_T1 = read.unsigned_short(0x88)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/reader.py", line 40, in unsigned_short
+    return self._bus.read_word_data(self._address, register) & 0xffff
+  File "/usr/local/lib/python3.7/dist-packages/smbus2/smbus2.py", line 453, in read_word_data
+    ioctl(self.fd, I2C_SMBUS, msg)
+OSError: [Errno 121] Remote I/O error
+2026-10-08 03:29:24,621 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-08 03:29:24,622 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-08 03:29:24,623 - DEBUG - [+] Getting wind direction
+2026-10-08 03:29:24,651 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-08 03:29:24,651 - DEBUG - [+] Reading lightning strike data
+2026-10-08 03:29:24,653 - DEBUG - [+] Reading rainfall rate data
+2026-10-08 03:29:24,653 - DEBUG - File rainlog.txt: 20261008021437, 
+2026-10-08 03:29:24,654 - INFO - [!] Weather Observation: 20261008022924,   0.0,   0.0,     0.0,  0.0,  0.0, 000,  0.0,  0.0,  0.0
+2026-10-08 03:29:24,655 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-08 03:29:24,655 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261008022924 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 000T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-08 03:29:26,229 - DEBUG - Message sent!
+2026-10-08 03:29:26,234 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-08 03:29:26,642 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-08 03:29:26,646 - DEBUG - [+] Finished wxlogger for observation time 20261008 02:29 UTC
+2026-10-08 03:29:56,678 - DEBUG - [+] Getting wind speed
+2026-10-08 03:30:01,740 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:31:01,803 - DEBUG - [+] Getting wind speed
+2026-10-08 03:31:06,864 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:32:06,931 - DEBUG - [+] Getting wind speed
+2026-10-08 03:32:11,993 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:33:12,037 - DEBUG - [+] Getting wind speed
+2026-10-08 03:33:17,099 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:34:17,148 - DEBUG - [+] Getting wind speed
+2026-10-08 03:34:22,211 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:35:22,248 - DEBUG - [+] Getting wind speed
+2026-10-08 03:35:27,310 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:36:27,376 - DEBUG - [+] Getting wind speed
+2026-10-08 03:36:32,438 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:37:32,501 - DEBUG - [+] Getting wind speed
+2026-10-08 03:37:37,563 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:38:37,608 - DEBUG - [+] Getting wind speed
+2026-10-08 03:38:42,670 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:39:42,733 - DEBUG - [+] Getting wind speed
+2026-10-08 03:39:47,795 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:40:47,857 - DEBUG - [+] Getting wind speed
+2026-10-08 03:40:52,919 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:41:52,982 - DEBUG - [+] Getting wind speed
+2026-10-08 03:41:58,044 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:42:58,106 - DEBUG - [+] Getting wind speed
+2026-10-08 03:43:03,169 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:44:03,231 - DEBUG - [+] Getting wind speed
+2026-10-08 03:44:08,294 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:44:08,295 - INFO - [+] Starting wxlogger for observation time 20261008 02:44 UTC
+2026-10-08 03:44:08,298 - DEBUG - [+] Getting weather observation
+2026-10-08 03:44:08,298 - DEBUG - [+] Checking GPS position
+2026-10-08 03:44:08,299 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-08 03:44:08,300 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-08 03:44:08,301 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-08 03:44:08,301 - DEBUG - [+] Starting BME280 obs
+2026-10-08 03:44:08,302 - ERROR - [Errno 121] Remote I/O error
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+  File "/home/wxstation/wxstation/wxcode/log_bme280.py", line 59, in get_mean_bme280_obs
+    bme280.load_calibration_params(bus,address)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/__init__.py", line 153, in load_calibration_params
+    compensation_params.dig_T1 = read.unsigned_short(0x88)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/reader.py", line 40, in unsigned_short
+    return self._bus.read_word_data(self._address, register) & 0xffff
+  File "/usr/local/lib/python3.7/dist-packages/smbus2/smbus2.py", line 453, in read_word_data
+    ioctl(self.fd, I2C_SMBUS, msg)
+OSError: [Errno 121] Remote I/O error
+2026-10-08 03:44:08,303 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-08 03:44:08,304 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-08 03:44:08,305 - DEBUG - [+] Getting wind direction
+2026-10-08 03:44:08,338 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-08 03:44:08,339 - DEBUG - [+] Reading lightning strike data
+2026-10-08 03:44:08,340 - DEBUG - [+] Reading rainfall rate data
+2026-10-08 03:44:08,341 - DEBUG - File rainlog.txt: 20261008022924, 
+2026-10-08 03:44:08,342 - INFO - [!] Weather Observation: 20261008024408,   0.0,   0.0,     0.0,  0.0,  0.0, 000,  0.0,  0.0,  0.0
+2026-10-08 03:44:08,343 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-08 03:44:08,343 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261008024408 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 000T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-08 03:44:09,460 - DEBUG - Message sent!
+2026-10-08 03:44:09,465 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-08 03:44:09,762 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-08 03:44:09,766 - DEBUG - [+] Finished wxlogger for observation time 20261008 02:44 UTC
+2026-10-08 03:45:09,829 - DEBUG - [+] Getting wind speed
+2026-10-08 03:45:14,891 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:46:14,954 - DEBUG - [+] Getting wind speed
+2026-10-08 03:46:20,016 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:47:20,058 - DEBUG - [+] Getting wind speed
+2026-10-08 03:47:25,120 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:48:25,182 - DEBUG - [+] Getting wind speed
+2026-10-08 03:48:30,245 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:49:30,296 - DEBUG - [+] Getting wind speed
+2026-10-08 03:49:35,358 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:50:35,421 - DEBUG - [+] Getting wind speed
+2026-10-08 03:50:40,483 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:51:40,546 - DEBUG - [+] Getting wind speed
+2026-10-08 03:51:45,608 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:52:45,671 - DEBUG - [+] Getting wind speed
+2026-10-08 03:52:50,733 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:53:50,795 - DEBUG - [+] Getting wind speed
+2026-10-08 03:53:55,858 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:54:55,920 - DEBUG - [+] Getting wind speed
+2026-10-08 03:55:00,983 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:56:01,045 - DEBUG - [+] Getting wind speed
+2026-10-08 03:56:06,108 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:57:06,170 - DEBUG - [+] Getting wind speed
+2026-10-08 03:57:11,233 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:58:11,295 - DEBUG - [+] Getting wind speed
+2026-10-08 03:58:16,358 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:59:16,420 - DEBUG - [+] Getting wind speed
+2026-10-08 03:59:21,482 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 03:59:21,487 - INFO - [+] Starting wxlogger for observation time 20261008 02:59 UTC
+2026-10-08 03:59:21,487 - DEBUG - [+] Getting weather observation
+2026-10-08 03:59:21,488 - DEBUG - [+] Checking GPS position
+2026-10-08 03:59:21,488 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-08 03:59:21,490 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-08 03:59:21,490 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-08 03:59:21,490 - DEBUG - [+] Starting BME280 obs
+2026-10-08 03:59:21,491 - ERROR - [Errno 121] Remote I/O error
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+  File "/home/wxstation/wxstation/wxcode/log_bme280.py", line 59, in get_mean_bme280_obs
+    bme280.load_calibration_params(bus,address)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/__init__.py", line 153, in load_calibration_params
+    compensation_params.dig_T1 = read.unsigned_short(0x88)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/reader.py", line 40, in unsigned_short
+    return self._bus.read_word_data(self._address, register) & 0xffff
+  File "/usr/local/lib/python3.7/dist-packages/smbus2/smbus2.py", line 453, in read_word_data
+    ioctl(self.fd, I2C_SMBUS, msg)
+OSError: [Errno 121] Remote I/O error
+2026-10-08 03:59:21,492 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-08 03:59:21,493 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-08 03:59:21,494 - DEBUG - [+] Getting wind direction
+2026-10-08 03:59:21,527 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-08 03:59:21,528 - DEBUG - [+] Reading lightning strike data
+2026-10-08 03:59:21,529 - DEBUG - [+] Reading rainfall rate data
+2026-10-08 03:59:21,530 - DEBUG - File rainlog.txt: 20261008024408, 
+2026-10-08 03:59:21,531 - INFO - [!] Weather Observation: 20261008025921,   0.0,   0.0,     0.0,  0.0,  0.0, 000,  0.0,  0.0,  0.0
+2026-10-08 03:59:21,531 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-08 03:59:21,532 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261008025921 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 000T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-08 03:59:24,162 - DEBUG - Message sent!
+2026-10-08 03:59:24,167 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-08 03:59:24,465 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-08 03:59:24,471 - DEBUG - [+] Finished wxlogger for observation time 20261008 02:59 UTC
+2026-10-08 04:00:24,534 - DEBUG - [+] Getting wind speed
+2026-10-08 04:00:29,596 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:01:29,658 - DEBUG - [+] Getting wind speed
+2026-10-08 04:01:34,721 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:02:34,787 - DEBUG - [+] Getting wind speed
+2026-10-08 04:02:39,849 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:03:39,916 - DEBUG - [+] Getting wind speed
+2026-10-08 04:03:44,978 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:04:45,044 - DEBUG - [+] Getting wind speed
+2026-10-08 04:04:50,107 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:05:50,173 - DEBUG - [+] Getting wind speed
+2026-10-08 04:05:55,235 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:06:55,301 - DEBUG - [+] Getting wind speed
+2026-10-08 04:07:00,363 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:08:00,430 - DEBUG - [+] Getting wind speed
+2026-10-08 04:08:05,492 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:09:05,558 - DEBUG - [+] Getting wind speed
+2026-10-08 04:09:10,621 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:10:10,687 - DEBUG - [+] Getting wind speed
+2026-10-08 04:10:15,749 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:11:15,815 - DEBUG - [+] Getting wind speed
+2026-10-08 04:11:20,878 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:12:20,944 - DEBUG - [+] Getting wind speed
+2026-10-08 04:12:26,006 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:13:26,072 - DEBUG - [+] Getting wind speed
+2026-10-08 04:13:31,135 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:14:01,170 - INFO - [+] Starting wxlogger for observation time 20261008 03:14 UTC
+2026-10-08 04:14:01,170 - DEBUG - [+] Getting weather observation
+2026-10-08 04:14:01,171 - DEBUG - [+] Checking GPS position
+2026-10-08 04:14:01,171 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-08 04:14:01,172 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-08 04:14:01,173 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-08 04:14:01,173 - DEBUG - [+] Starting BME280 obs
+2026-10-08 04:14:01,174 - ERROR - [Errno 121] Remote I/O error
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+  File "/home/wxstation/wxstation/wxcode/log_bme280.py", line 59, in get_mean_bme280_obs
+    bme280.load_calibration_params(bus,address)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/__init__.py", line 153, in load_calibration_params
+    compensation_params.dig_T1 = read.unsigned_short(0x88)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/reader.py", line 40, in unsigned_short
+    return self._bus.read_word_data(self._address, register) & 0xffff
+  File "/usr/local/lib/python3.7/dist-packages/smbus2/smbus2.py", line 453, in read_word_data
+    ioctl(self.fd, I2C_SMBUS, msg)
+OSError: [Errno 121] Remote I/O error
+2026-10-08 04:14:01,175 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-08 04:14:01,175 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-08 04:14:01,177 - DEBUG - [+] Getting wind direction
+2026-10-08 04:14:01,202 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-08 04:14:01,202 - DEBUG - [+] Reading lightning strike data
+2026-10-08 04:14:01,203 - DEBUG - [+] Reading rainfall rate data
+2026-10-08 04:14:01,204 - DEBUG - File rainlog.txt: 20261008025921, 
+2026-10-08 04:14:01,205 - INFO - [!] Weather Observation: 20261008031401,   0.0,   0.0,     0.0,  0.0,  0.0, 000,  0.0,  0.0,  0.0
+2026-10-08 04:14:01,205 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-08 04:14:01,206 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261008031401 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 000T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-08 04:14:02,682 - DEBUG - Message sent!
+2026-10-08 04:14:02,687 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-08 04:14:03,033 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-08 04:14:03,039 - DEBUG - [+] Finished wxlogger for observation time 20261008 03:14 UTC
+2026-10-08 04:14:33,071 - DEBUG - [+] Getting wind speed
+2026-10-08 04:14:38,134 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-08 04:15:38,196 - DEBUG - [+] Getting wind speed
+2026-10-08 04:15:43,258 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph

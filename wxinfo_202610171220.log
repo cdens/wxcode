@@ -1,0 +1,102 @@
+2026-10-17 13:20:00,082 - INFO - [+] Beginning PiWxStation Logger
+2026-10-17 13:20:00,082 - INFO - [+] Starting configuration thread
+2026-10-17 13:20:00,085 - INFO - [+] Starting rain logging thread
+2026-10-17 13:20:00,088 - DEBUG - [+] Rain logger initialized- configuring logger
+2026-10-17 13:20:00,088 - DEBUG - [+] Rain logging thread initiated
+2026-10-17 13:20:00,088 - DEBUG - [+] Starting lightning logging thread
+2026-10-17 13:20:00,089 - INFO - [+] Lightning logging thread initiated
+2026-10-17 13:20:00,089 - DEBUG - [+] Starting WxStation logger loop
+2026-10-17 13:20:02,802 - DEBUG - Message sent!
+2026-10-17 13:20:02,805 - DEBUG - [+] Rain logger configured, waiting for bucket tips
+2026-10-17 13:20:02,806 - DEBUG - [+] Initializing wind direction
+2026-10-17 13:20:02,838 - DEBUG - [+] Getting wind speed
+2026-10-17 13:20:02,913 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-17 13:20:02,920 - DEBUG - [-] Detector connect attempt 1 of 20 failed
+2026-10-17 13:20:03,933 - DEBUG - [-] Detector connect attempt 2 of 20 failed
+2026-10-17 13:20:04,947 - DEBUG - [-] Detector connect attempt 3 of 20 failed
+2026-10-17 13:20:05,960 - DEBUG - [-] Detector connect attempt 4 of 20 failed
+2026-10-17 13:20:06,974 - DEBUG - [-] Detector connect attempt 5 of 20 failed
+2026-10-17 13:20:07,910 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:20:07,987 - DEBUG - [-] Detector connect attempt 6 of 20 failed
+2026-10-17 13:20:09,001 - DEBUG - [-] Detector connect attempt 7 of 20 failed
+2026-10-17 13:20:10,014 - DEBUG - [-] Detector connect attempt 8 of 20 failed
+2026-10-17 13:20:11,028 - DEBUG - [-] Detector connect attempt 9 of 20 failed
+2026-10-17 13:20:12,042 - DEBUG - [-] Detector connect attempt 10 of 20 failed
+2026-10-17 13:20:13,055 - DEBUG - [-] Detector connect attempt 11 of 20 failed
+2026-10-17 13:20:14,072 - DEBUG - [-] Detector connect attempt 12 of 20 failed
+2026-10-17 13:20:15,086 - DEBUG - [-] Detector connect attempt 13 of 20 failed
+2026-10-17 13:20:16,100 - DEBUG - [-] Detector connect attempt 14 of 20 failed
+2026-10-17 13:20:17,113 - DEBUG - [-] Detector connect attempt 15 of 20 failed
+2026-10-17 13:20:18,127 - DEBUG - [-] Detector connect attempt 16 of 20 failed
+2026-10-17 13:20:19,144 - DEBUG - [-] Detector connect attempt 17 of 20 failed
+2026-10-17 13:20:20,157 - DEBUG - [-] Detector connect attempt 18 of 20 failed
+2026-10-17 13:20:21,171 - DEBUG - [-] Detector connect attempt 19 of 20 failed
+2026-10-17 13:20:22,184 - DEBUG - [-] Detector connect attempt 20 of 20 failed
+2026-10-17 13:20:23,186 - WARNING - [-] All detector connect attempts failed- terminating
+2026-10-17 13:21:07,978 - DEBUG - [+] Getting wind speed
+2026-10-17 13:21:13,041 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:22:13,103 - DEBUG - [+] Getting wind speed
+2026-10-17 13:22:18,166 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:23:18,229 - DEBUG - [+] Getting wind speed
+2026-10-17 13:23:23,291 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:24:23,357 - DEBUG - [+] Getting wind speed
+2026-10-17 13:24:28,420 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:25:28,487 - DEBUG - [+] Getting wind speed
+2026-10-17 13:25:33,548 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:26:33,615 - DEBUG - [+] Getting wind speed
+2026-10-17 13:26:38,677 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:27:38,739 - DEBUG - [+] Getting wind speed
+2026-10-17 13:27:43,800 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:28:43,863 - DEBUG - [+] Getting wind speed
+2026-10-17 13:28:48,924 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:29:18,956 - INFO - [+] Starting wxlogger for observation time 20261017 12:29 UTC
+2026-10-17 13:29:18,956 - DEBUG - [+] Getting weather observation
+2026-10-17 13:29:18,956 - DEBUG - [+] Checking GPS position
+2026-10-17 13:29:18,958 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-17 13:29:18,973 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-17 13:29:18,974 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-17 13:29:18,974 - ERROR - name 'log_bme280' is not defined
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+NameError: name 'log_bme280' is not defined
+2026-10-17 13:29:18,976 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-17 13:29:18,976 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-17 13:29:18,982 - DEBUG - [+] Getting wind direction
+2026-10-17 13:29:19,006 - DEBUG - WDir Voltages: CH:0=0.00V, CH:1=0.00V, CH:2=0.00V, CH:3=0.00V, CH:4=0.00V, CH:5=0.00V, CH:6=0.00V, CH:7=0.00V, 
+2026-10-17 13:29:19,007 - DEBUG - [+] Reading lightning strike data
+2026-10-17 13:29:19,012 - DEBUG - [+] Reading rainfall rate data
+2026-10-17 13:29:19,012 - DEBUG - File rainlog.txt: 20261017122000, 
+2026-10-17 13:29:19,013 - INFO - [!] Weather Observation: 20261017122918,   0.0,   0.0,     0.0,  0.0,  0.0, 000,  0.0,  0.0,  0.0
+2026-10-17 13:29:19,013 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-17 13:29:19,014 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261017122918 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 000T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-17 13:29:20,771 - DEBUG - Message sent!
+2026-10-17 13:29:20,792 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-17 13:29:21,131 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-17 13:29:21,146 - DEBUG - [+] Finished wxlogger for observation time 20261017 12:29 UTC
+2026-10-17 13:29:51,157 - DEBUG - [+] Getting wind speed
+2026-10-17 13:29:56,219 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 13:30:56,281 - DEBUG - [+] Getting wind speed
+2026-10-17 13:31:01,343 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph

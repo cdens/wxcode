@@ -15,7 +15,7 @@ Logger = logging.getLogger(__name__)
 def runLightningLogger():
     
     url = open("serveraddress","r").read().strip()
-    currentLightningThread = LightningThread(url=url)
+    currentLightningThread = LightningThread()
     currentLightningThread.start()
     
     

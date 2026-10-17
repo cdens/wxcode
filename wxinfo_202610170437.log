@@ -1,0 +1,95 @@
+2026-10-17 05:37:09,449 - INFO - [+] Beginning PiWxStation Logger
+2026-10-17 05:37:09,449 - INFO - [+] Starting configuration thread
+2026-10-17 05:37:09,452 - INFO - [+] Starting rain logging thread
+2026-10-17 05:37:09,455 - DEBUG - [+] Rain logger initialized- configuring logger
+2026-10-17 05:37:09,455 - DEBUG - [+] Rain logging thread initiated
+2026-10-17 05:37:09,455 - DEBUG - [+] Starting lightning logging thread
+2026-10-17 05:37:09,456 - INFO - [+] Lightning logging thread initiated
+2026-10-17 05:37:09,456 - DEBUG - [+] Starting WxStation logger loop
+2026-10-17 05:37:11,663 - DEBUG - Message sent!
+2026-10-17 05:37:11,666 - DEBUG - [+] Rain logger configured, waiting for bucket tips
+2026-10-17 05:37:11,667 - DEBUG - [+] Initializing wind direction
+2026-10-17 05:37:11,706 - DEBUG - [+] Getting wind speed
+2026-10-17 05:37:11,775 - DEBUG - WDir Voltages: CH:0=0.22V, CH:1=3.30V, CH:2=3.30V, CH:3=3.30V, CH:4=0.01V, CH:5=3.30V, CH:6=3.30V, CH:7=0.33V, 
+2026-10-17 05:37:11,781 - INFO - [+] Lightning detector connected
+2026-10-17 05:37:16,792 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:37:16,793 - INFO - [+] Starting wxlogger for observation time 20261017 04:37 UTC
+2026-10-17 05:37:16,793 - DEBUG - [+] Getting weather observation
+2026-10-17 05:37:16,794 - DEBUG - [+] Checking GPS position
+2026-10-17 05:37:16,795 - ERROR - [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 265, in open
+    self.fd = os.open(self.portstr, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
+FileNotFoundError: [Errno 2] No such file or directory: '/dev/ttyACM0'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/GPSinteract.py", line 117, in getcurrentposition
+    with Serial(port, baud, timeout=1) as ser:
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialutil.py", line 240, in __init__
+    self.open()
+  File "/usr/local/lib/python3.7/dist-packages/serial/serialposix.py", line 268, in open
+    raise SerialException(msg.errno, "could not open port {}: {}".format(self._port, msg))
+serial.serialutil.SerialException: [Errno 2] could not open port /dev/ttyACM0: [Errno 2] No such file or directory: '/dev/ttyACM0'
+2026-10-17 05:37:16,814 - ERROR - [!] Unable to communicate with specified port for GPS fix
+2026-10-17 05:37:16,814 - DEBUG - [+] Getting temperature/humidity/pressure
+2026-10-17 05:37:16,815 - DEBUG - [+] Starting BME280 obs
+2026-10-17 05:37:16,817 - ERROR - [Errno 121] Remote I/O error
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/wxlogger.py", line 152, in log
+    T,q,P = log_bme280.get_mean_bme280_obs(20, 0.5) #mean values for 20 obs over 10 second period
+  File "/home/wxstation/wxstation/wxcode/log_bme280.py", line 59, in get_mean_bme280_obs
+    bme280.load_calibration_params(bus,address)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/__init__.py", line 153, in load_calibration_params
+    compensation_params.dig_T1 = read.unsigned_short(0x88)
+  File "/usr/local/lib/python3.7/dist-packages/bme280/reader.py", line 40, in unsigned_short
+    return self._bus.read_word_data(self._address, register) & 0xffff
+  File "/usr/local/lib/python3.7/dist-packages/smbus2/smbus2.py", line 453, in read_word_data
+    ioctl(self.fd, I2C_SMBUS, msg)
+OSError: [Errno 121] Remote I/O error
+2026-10-17 05:37:16,827 - DEBUG - [+] Calculating mean and max wind speed for current interval
+2026-10-17 05:37:16,828 - WARNING - [!] No wind speed measurements for the current observation period 
+2026-10-17 05:37:16,834 - DEBUG - [+] Getting wind direction
+2026-10-17 05:37:16,863 - DEBUG - WDir Voltages: CH:0=0.61V, CH:1=3.30V, CH:2=3.30V, CH:3=3.30V, CH:4=0.01V, CH:5=3.30V, CH:6=3.30V, CH:7=0.23V, 
+2026-10-17 05:37:16,863 - DEBUG - [+] Reading lightning strike data
+2026-10-17 05:37:16,869 - DEBUG - [+] Reading rainfall rate data
+2026-10-17 05:37:16,870 - DEBUG - File rainlog.txt: 20261017043709, 
+2026-10-17 05:37:16,871 - INFO - [!] Weather Observation: 20261017043716,   0.0,   0.0,     0.0,  0.0,  0.0, 045,  0.0,  0.0,  0.0
+2026-10-17 05:37:16,872 - DEBUG - [+] Sending POST with observation to server: https://densmorewx.pythonanywhere.com
+2026-10-17 05:37:16,873 - DEBUG - Sending email to account densmorewx@gmail.com, password iipj wbzi mzjz cqnz, text:
+20261017043716 Observation:
+Temperature-  32.0 degF
+Humidity-   0.0%
+Pressure-     0.0 mb
+Wind-  0.0 gust  0.0 mph brg 045T
+Lightning-  0.0 strikes/hr
+Rainfall-  0.0 mm/hr
+2026-10-17 05:37:19,300 - DEBUG - Message sent!
+2026-10-17 05:37:19,320 - DEBUG - Starting new HTTPS connection (1): densmorewx.pythonanywhere.com:443
+2026-10-17 05:37:19,649 - DEBUG - https://densmorewx.pythonanywhere.com:443 "POST /addnewob HTTP/1.1" 200 7
+2026-10-17 05:37:19,658 - DEBUG - [+] Finished wxlogger for observation time 20261017 04:37 UTC
+2026-10-17 05:38:19,720 - DEBUG - [+] Getting wind speed
+2026-10-17 05:38:24,782 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:39:24,844 - DEBUG - [+] Getting wind speed
+2026-10-17 05:39:29,679 - DEBUG - [+] Lightning strike detected at 20261017043929, 14 km away, energy=31721
+2026-10-17 05:39:29,679 - ERROR - 'LightningThread' object has no attribute 'url'
+Traceback (most recent call last):
+  File "/home/wxstation/wxstation/wxcode/lightninglogger.py", line 148, in run
+    web.postlightningstrike(dist, cdtg, self.password, self.url)
+AttributeError: 'LightningThread' object has no attribute 'url'
+2026-10-17 05:39:29,906 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:40:29,968 - DEBUG - [+] Getting wind speed
+2026-10-17 05:40:35,031 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:41:35,093 - DEBUG - [+] Getting wind speed
+2026-10-17 05:41:40,155 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:42:40,222 - DEBUG - [+] Getting wind speed
+2026-10-17 05:42:45,284 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:43:45,350 - DEBUG - [+] Getting wind speed
+2026-10-17 05:43:50,413 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:44:50,475 - DEBUG - [+] Getting wind speed
+2026-10-17 05:44:55,537 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:45:55,603 - DEBUG - [+] Getting wind speed
+2026-10-17 05:46:00,665 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
+2026-10-17 05:47:00,727 - DEBUG - [+] Getting wind speed
+2026-10-17 05:47:05,790 - DEBUG - Measured wind speed: 0 counts, 0.0 rotations, 0.0 mph
