@@ -15,7 +15,8 @@ Logger = logging.getLogger(__name__)
 def runLightningLogger():
     
     url = open("serveraddress","r").read().strip()
-    currentLightningThread = LightningThread()
+    config = {"lightning":"lightninglog.txt", "password":"fakepassword", "dateformat":"%Y%m%d%H%M%S"}
+    currentLightningThread = LightningThread(config)
     currentLightningThread.start()
     
     
