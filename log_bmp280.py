@@ -6,11 +6,11 @@ import time
 
 
 #retrieve and return single observation from BME280 (function called by WxStation Logger)
-def retrieve_bme280_ob():
+def retrieve_bmp280_ob():
     bus, address = set_bme280_i2c()
 
     port = 1 
-    address = 0x77
+    address = 0x76
     with smbus2.SMBus(port) as bus:
         bme280.load_calibration_params(bus,address)
         
@@ -23,7 +23,7 @@ def retrieve_bme280_ob():
 
 
 #log BME280 T/q/P output to command line (1 second sampling frequency)
-def log_bme280_to_cmd():
+def log_bmp280_to_cmd():
     port = 1 
     address = 0x76
     with smbus2.SMBus(port) as bus:
@@ -40,7 +40,7 @@ def log_bme280_to_cmd():
  
 
 #retrieve mean value from # of obs over interval
-def get_mean_bme280_obs(num,dt):
+def get_mean_bmp280_obs(num,dt):
     
     if num < 1:
         num = 1
@@ -55,7 +55,7 @@ def get_mean_bme280_obs(num,dt):
     print("[+] Starting BME280 obs")
 
     port = 1 
-    address = 0x77
+    address = 0x76
     with smbus2.SMBus(port) as bus:
         bme280.load_calibration_params(bus,address)
        
@@ -85,4 +85,4 @@ def get_mean_bme280_obs(num,dt):
 
 #if function is called, run log to command line
 if __name__ == "__main__":
-    log_bme280_to_cmd()
+    log_bmp280_to_cmd()
