@@ -112,15 +112,15 @@ def main(url, needsGPSupdate):
     
 if __name__ == "__main__":
     
-    debugging = True
-    
+    debugging = False
+
     #first GPS cycle will automatically be pushed to webserver
     url = open("serveraddress","r").read().strip()
     needsGPSupdate = True
     
-    currentLevel = logging.INFO #DEBUG, INFO, WARNING, ERROR
+    currentLevel = logging.DEBUG #DEBUG, INFO, WARNING, ERROR
     dtgstr = datetime.strftime(datetime.utcnow(),"%Y%m%d%H%M")
-    logfile = f"wxinfo_{dtgstr}.log"
+    logfile = f"/home/wxstation/wxstation/wxcode/wxinfo_{dtgstr}.log"
     
     
     #creating logger

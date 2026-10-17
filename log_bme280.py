@@ -9,7 +9,7 @@ def retrieve_bme280_ob():
     bus, address = set_bme280_i2c()
 
     port = 1 
-    address = 0x77
+    address = 0x76 #bme280 is 77, bmp280 is 76
     with smbus2.SMBus(port) as bus:
         bme280.load_calibration_params(bus,address)
         

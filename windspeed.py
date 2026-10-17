@@ -54,7 +54,8 @@ class WindSpeedLogger:
 
         #get number of anemometer rotations in 30 seconds (GPIO17/pin11)
         counts = self.countSensorTriggers(17,dt) 
-        rotations_per_second = counts/(2 * dt) #divide by 2 since polls twice per rotation
+        #rotations_per_second = counts/(2 * dt) #divide by 2 since polls twice per rotation
+        rotations_per_second = counts/dt #dont divide by two because second magnet doesnt work :/
         
         # #convert counts to wind speed (mph)
         # # speed (in/sec) = 2*pi*r/t (r=10 in, t = dt -> default 30sec)
@@ -78,4 +79,5 @@ def pollanemometer(dt=10):
 if  __name__ == "__main__":
     Logger.debug(f"[+] Starting wind speed measurement for 10 seconds")
     wspd = pollanemometer(dt=10)
+    print(f"Wind speed: {wspd} mph")
 
