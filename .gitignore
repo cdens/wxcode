@@ -2,6 +2,7 @@
 *.png
 *.py_old
 *.txt
+*.log
 .config
 activelogging
 __pycache__/
