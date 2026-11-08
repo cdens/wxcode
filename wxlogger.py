@@ -36,6 +36,12 @@ class WeatherLogger(threading.Thread):
         cdtgstr = dt.datetime.utcnow().strftime(config["dateformat"])
         web.send_email("Logger Initialized", "WxStation Logger Initialized, DTG " + cdtgstr, config["emailaccount"], [config["emailaccount"]], config["emailpassword"])
         
+        #initializing file for observation queue to send to web server
+        self.queuefile = "observationqueue.csv"
+        if not path.exists(self.queuefile): #create empty file if it doesn't exist
+            with open(self.queuefile, "a") as f:
+                pass
+        
     def change_lock(self,status):
         self.locked = bool(int(open("activelogging","r").read().strip()))
     
@@ -219,15 +225,50 @@ def log(config, needsGPSupdate, wspdlist):
     #line to send to file
     curline = f"{curdatetimestr}, {T:5.1f}, {q:5.1f}, {P:7.1f}, {wspd:4.1f}, {wgust:4.1f}, {wdir:03.0f}, {strikeRate:4.1f}, {rainRate:4.1f}, {solarVal:4.1f}" #ob line to be transmitted
     Logger.info(f"[!] Weather Observation: {curline}")
-
-    #POST request for website 
-    Logger.debug("[+] Sending POST with observation to server: " + config["url"])
-    success = web.postregularupdate(curdatetimestr, T,q,P, rainRate, wspd, wgust, wdir, strikeRate, solarVal, config["password"], config["url"], config["emailaccount"], config["emailpassword"])
-
-    #appending data to file
+    
+    #appending data to log file
     curlog = reldatadir + "WxObs" + curdatetime.strftime(filedateformat) + ".csv"
     with open(curlog,"a") as f:
         f.write(curline + "\n")
+    
+    #appending data to file with observations to send, attempting to send those observations
+    with open(self.queuefile,'a') as f:
+        f.write(curline + '\n')
+    
+    failed_to_transmit = [];
+    
+    #reading through all lines waiting to be sent, attempting to send
+    with open(self.queuefile) as f:
+        all_obs = f.read().splitlines() #getting list of obs
+        
+        for cob in all_obs:
+            
+            #reading current observation
+            cob_split = cob.split(',')
+            curdatetimestr = cob[0]
+            T = float(cob[1])
+            q = float(cob[2])
+            P = float(cob[3])
+            wspd = float(cob[4])
+            wgust = float(cob[5])
+            wdir = float(cob[6])
+            strikeRate = float(cob[7])
+            rainRate = float(cob[8])
+            solarVal = float(cob[9])
+
+            #POST request for website 
+            Logger.debug(f"[+] Sending POST with observation at time {curdatetimestr} to server: " + config["url"])
+            success = web.postregularupdate(curdatetimestr, T,q,P, rainRate, wspd, wgust, wdir, strikeRate, solarVal, config["password"], config["url"], config["emailaccount"], config["emailpassword"])
+            
+            if not success:
+                Logger.debug("[+] POST failed, saving for next ob cycle")
+                failed_to_transmit.append(cob)
+                
+    #replace queue file with new queue
+    remove(self.queuefile)
+    with open(self.queuefile,'a') as f:
+        for line in failed_to_transmit:
+            f.write(line + '\n')
         
     return needsGPSupdate
     
