@@ -245,16 +245,16 @@ def log(config, needsGPSupdate, wspdlist, queuefile):
             
             #reading current observation
             cob_split = cob.split(',')
-            curdatetimestr = cob[0]
-            T = float(cob[1])
-            q = float(cob[2])
-            P = float(cob[3])
-            wspd = float(cob[4])
-            wgust = float(cob[5])
-            wdir = float(cob[6])
-            strikeRate = float(cob[7])
-            rainRate = float(cob[8])
-            solarVal = float(cob[9])
+            curdatetimestr = cob_split[0]
+            T = float(cob_split[1])
+            q = float(cob_split[2])
+            P = float(cob_split[3])
+            wspd = float(cob_split[4])
+            wgust = float(cob_split[5])
+            wdir = float(cob_split[6])
+            strikeRate = float(cob_split[7])
+            rainRate = float(cob_split[8])
+            solarVal = float(cob_split[9])
 
             #POST request for website 
             Logger.debug(f"[+] Sending POST with observation at time {curdatetimestr} to server: " + config["url"])
