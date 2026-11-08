@@ -57,7 +57,7 @@ class WeatherLogger(threading.Thread):
     def run_logger(self):
         if not self.isLogging:
             self.isLogging = True
-            self.needsGPSupdate = log(self.config, self.needsGPSupdate, self.wspdlist)
+            self.needsGPSupdate = log(self.config, self.needsGPSupdate, self.wspdlist, self.queuefile)
             self.isLogging = False
             
         
@@ -107,7 +107,7 @@ class WeatherLogger(threading.Thread):
 
 
 
-def log(config, needsGPSupdate, wspdlist):
+def log(config, needsGPSupdate, wspdlist, queuefile):
     
     Logger.debug("[+] Getting weather observation")
 
@@ -232,13 +232,13 @@ def log(config, needsGPSupdate, wspdlist):
         f.write(curline + "\n")
     
     #appending data to file with observations to send, attempting to send those observations
-    with open(self.queuefile,'a') as f:
+    with open(queuefile,'a') as f:
         f.write(curline + '\n')
     
     failed_to_transmit = [];
     
     #reading through all lines waiting to be sent, attempting to send
-    with open(self.queuefile) as f:
+    with open(queuefile) as f:
         all_obs = f.read().splitlines() #getting list of obs
         
         for cob in all_obs:
@@ -265,8 +265,8 @@ def log(config, needsGPSupdate, wspdlist):
                 failed_to_transmit.append(cob)
                 
     #replace queue file with new queue
-    remove(self.queuefile)
-    with open(self.queuefile,'a') as f:
+    remove(queuefile)
+    with open(queuefile,'a') as f:
         for line in failed_to_transmit:
             f.write(line + '\n')
         
